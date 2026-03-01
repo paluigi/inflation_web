@@ -16,6 +16,17 @@ codes <- fil |> filter(concept == "coicop18") |> mutate(level=level(code))|> mut
 
 write.csv(codes, file = "src/assets/maps/coicop18.csv", row.names = FALSE)
 
+
+dtd <- datasets()
+dtf <- datafilters(id="prc_hicp_iw")
+dtf
+
+dtf_c <- datafilters(id="prc_hicp_cw")
+dtf_c
+
+dtf_ctr <- datafilters(id="prc_hicp_ctr")
+dtf_ctr
+
 # unique(codes$level)
 # unique(fil$concept)
 
