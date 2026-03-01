@@ -1,0 +1,10 @@
+**/assets/data/
+renv/
+.venv/
+.Rprofile
+renv.lock
+uv.lock
+*.csv
+!coicop18.csv
+!geo.csv
+!unit.csv

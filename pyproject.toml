@@ -1,0 +1,36 @@
+[project]
+name = "inflation-web"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Flet developer", email = "you@example.com" }
+]
+dependencies = [
+    "flet>=0.80.5",
+    "flet-charts>=0.80.5",
+    "openpyxl>=3.1.5",
+    "pandas>=2.2.3",
+]
+
+[dependency-groups]
+dev = [
+    "flet-cli>=0.80.5",
+    "flet-desktop-light>=0.80.5",
+    "flet-web>=0.80.5",
+    "jupyter>=1.1.1",
+]
+download = [
+    "sdmx1>=2.25.1",
+    "tenacity>=9.1.4",
+]
+
+[tool.flet]
+org = "com.mycompany"
+product = "inflation-web"
+company = "Flet"
+copyright = "Copyright (C) 2023-2026 by Flet"
+
+[tool.flet.app]
+path = "src"
