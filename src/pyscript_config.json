@@ -1,0 +1,14 @@
+{
+  "files": {
+    "assets/maps/geo.csv": "./geo.csv",
+    "assets/maps/unit.csv": "./unit.csv",
+    "assets/maps/coicop18.csv": "./coicop18.csv",
+    "assets/last_update.txt": "./last_update.txt"
+  },
+  "packages": [
+    "pandas",
+    "altair",
+    "openpyxl"
+  ]
+
+}

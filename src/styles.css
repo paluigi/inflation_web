@@ -1,0 +1,666 @@
+/* ============================================================================
+   CSS Variables for Theme Support
+   ============================================================================ */
+
+:root {
+    --header-bg: #2196F3;
+    --header-bg-gradient: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
+    --sidebar-bg: #f5f5f5;
+    --content-bg: #ffffff;
+    --border-color: #ddd;
+    --text-color: #333;
+    --text-muted: #6c757d;
+    --card-bg: #ffffff;
+    --table-striped-bg: #f8f9fa;
+    --table-hover-bg: #e9ecef;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --checkbox-bg: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --placeholder-bg: #f8f9fa;
+    --placeholder-color: #adb5bd;
+}
+
+[data-theme="dark"] {
+    --header-bg: #1a1a2e;
+    --header-bg-gradient: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+    --sidebar-bg: #16213e;
+    --content-bg: #0f0f23;
+    --border-color: #444;
+    --text-color: #e0e0e0;
+    --text-muted: #9e9e9e;
+    --card-bg: #1a1a2e;
+    --table-striped-bg: #1e2a4a;
+    --table-hover-bg: #2a3a5a;
+    --input-bg: #1a1a2e;
+    --input-border: #444;
+    --checkbox-bg: #1a1a2e;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --placeholder-bg: #1a1a2e;
+    --placeholder-color: #555;
+}
+
+/* ============================================================================
+   Base Styles
+   ============================================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--content-bg);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================================================
+   Header Styles
+   ============================================================================ */
+
+.header {
+    background: var(--header-bg-gradient);
+    color: white;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.header-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+.header .btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.header .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}
+
+/* ============================================================================
+   Main Layout
+   ============================================================================ */
+
+.main-container {
+    height: calc(100vh - 80px);
+    overflow: hidden;
+}
+
+.main-container > .row {
+    height: 100%;
+    margin: 0 !important;
+}
+
+/* ============================================================================
+   Sidebar Styles
+   ============================================================================ */
+
+.sidebar-col {
+    height: 100%;
+    overflow: hidden;
+}
+
+.sidebar {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    height: 100%;
+    overflow-y: auto;
+    padding: 1rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-tabs {
+    margin-bottom: 1rem;
+}
+
+.sidebar-tabs .nav-link {
+    color: var(--text-color);
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.sidebar-tabs .nav-link:hover {
+    background-color: var(--table-hover-bg);
+}
+
+.sidebar-tabs .nav-link.active {
+    background-color: var(--card-bg);
+    color: var(--header-bg);
+    border-color: var(--border-color);
+    border-bottom-color: transparent;
+}
+
+[data-theme="dark"] .sidebar-tabs .nav-link.active {
+    color: #64B5F6;
+}
+
+.control-group {
+    margin-bottom: 1rem;
+}
+
+.control-group .form-label {
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin-bottom: 0.375rem;
+    color: var(--text-color);
+}
+
+.common-controls {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================================================
+   Checkbox List Styles
+   ============================================================================ */
+
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    background-color: var(--checkbox-bg);
+    transition: all 0.3s ease;
+}
+
+.checkbox-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.checkbox-list::-webkit-scrollbar-track {
+    background: var(--table-striped-bg);
+    border-radius: 4px;
+}
+
+.checkbox-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.checkbox-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+.checkbox-list .form-check {
+    margin-bottom: 0.25rem;
+    padding: 0.25rem 0;
+}
+
+.checkbox-list .form-check-label {
+    font-size: 0.8125rem;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    max-width: 100%;
+}
+
+/* ============================================================================
+   Form Controls
+   ============================================================================ */
+
+.form-control,
+.form-select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--input-bg);
+    border-color: var(--header-bg);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    border-color: #64B5F6;
+    box-shadow: 0 0 0 0.2rem rgba(100, 181, 246, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+/* ============================================================================
+   Content Area Styles
+   ============================================================================ */
+
+.content-col {
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-content {
+    height: 100%;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background-color: var(--content-bg);
+    transition: background-color 0.3s ease;
+}
+
+/* ============================================================================
+   Chart Container Styles
+   ============================================================================ */
+
+.chart-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    min-height: 450px;
+    transition: all 0.3s ease;
+}
+
+.chart-wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.chart-wrapper svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================================================================
+   Legend Container Styles
+   ============================================================================ */
+
+.legend-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+/* ============================================================================
+   Table Container Styles
+   ============================================================================ */
+
+.table-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: var(--sidebar-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-header h5 {
+    color: var(--text-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.table-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.table-scroll::-webkit-scrollbar {
+    width: 10px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+    background: var(--table-striped-bg);
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* ============================================================================
+   Table Styles
+   ============================================================================ */
+
+.table {
+    margin-bottom: 0;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+.table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table thead th {
+    background-color: var(--sidebar-bg);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 0.75rem;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--table-striped-bg);
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--table-hover-bg);
+}
+
+.table td {
+    padding: 0.5rem 0.75rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* ============================================================================
+   Placeholder Message Styles
+   ============================================================================ */
+
+.placeholder-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: var(--placeholder-color);
+    background-color: var(--placeholder-bg);
+    border-radius: 0.5rem;
+    padding: 2rem;
+}
+
+.placeholder-message i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.placeholder-message p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* ============================================================================
+   Loading Overlay Styles
+   ============================================================================ */
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-overlay p {
+    color: white;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   Button Styles
+   ============================================================================ */
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-success:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   Badge Styles
+   ============================================================================ */
+
+.badge {
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+/* ============================================================================
+   Responsive Styles
+   ============================================================================ */
+
+/* Large devices (desktops, less than 992px) */
+@media (max-width: 991.98px) {
+    .sidebar-col {
+        height: auto;
+    }
+    
+    .sidebar {
+        height: auto;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .content-col {
+        height: auto;
+    }
+    
+    .main-content {
+        height: auto;
+        min-height: calc(100vh - 80px);
+    }
+    
+    .sidebar-toggle {
+        width: 100%;
+    }
+    
+    .checkbox-list {
+        max-height: 150px;
+    }
+    
+    .chart-container {
+        min-height: 350px;
+    }
+    
+    .table-scroll {
+        max-height: 300px;
+    }
+}
+
+/* Medium devices (tablets, less than 768px) */
+@media (max-width: 767.98px) {
+    .header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .header-title {
+        font-size: 1.25rem;
+    }
+    
+    .header-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .chart-container {
+        padding: 0.75rem;
+        min-height: 300px;
+    }
+    
+    .sidebar-tabs .nav-link {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.5rem;
+    }
+    
+    .control-group .form-label {
+        font-size: 0.8125rem;
+    }
+    
+    .table {
+        font-size: 0.8125rem;
+    }
+    
+    .table thead th,
+    .table td {
+        padding: 0.375rem 0.5rem;
+    }
+}
+
+/* Small devices (landscape phones, less than 576px) */
+@media (max-width: 575.98px) {
+    .header-title {
+        font-size: 1rem;
+    }
+    
+    .header-title i {
+        display: none;
+    }
+    
+    .header .btn-outline-light span {
+        display: none;
+    }
+    
+    .chart-container {
+        min-height: 250px;
+    }
+    
+    .placeholder-message {
+        min-height: 150px;
+        padding: 1rem;
+    }
+    
+    .placeholder-message i {
+        font-size: 2rem;
+    }
+    
+    .placeholder-message p {
+        font-size: 0.875rem;
+    }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+    .sidebar-col,
+    .header .btn,
+    .loading-overlay {
+        display: none !important;
+    }
+    
+    .header {
+        position: relative;
+        background: #2196F3 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .main-content {
+        padding: 0;
+    }
+    
+    .chart-container,
+    .table-container {
+        break-inside: avoid;
+    }
+}
+
+/* ============================================================================
+   Altair Chart Overrides
+   ============================================================================ */
+
+.chart-wrapper .vega-embed {
+    width: 100%;
+}
+
+.chart-wrapper .vega-embed canvas {
+    max-width: 100%;
+}
+
+[data-theme="dark"] .chart-wrapper text {
+    fill: var(--text-color) !important;
+}
+
+[data-theme="dark"] .chart-wrapper .role-axis-title text,
+[data-theme="dark"] .chart-wrapper .role-legend-title text,
+[data-theme="dark"] .chart-wrapper .role-legend-label text {
+    fill: var(--text-color) !important;
+}
+
+/* ============================================================================
+   Animation Styles
+   ============================================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.chart-wrapper,
+.table-container {
+    animation: fadeIn 0.3s ease-in;
+}

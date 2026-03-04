@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inflation Data Explorer</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- PyScript CSS -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2026.2.1/core.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="header-title">
+                        <i class="bi bi-graph-up-arrow me-2"></i>
+                        Inflation Data Explorer
+                    </h1>
+                    <p class="header-subtitle mb-0">
+                        Last update: <span id="last-update">Loading...</span>
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <button id="theme-toggle" class="btn btn-outline-light btn-sm" type="button" py-click="on_theme_toggle()">
+                        <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        <span class="ms-1">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-container">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-lg-3 col-xl-3 sidebar-col">
+                <div class="sidebar" id="sidebar">
+                    <!-- Mobile Toggle -->
+                    <button class="btn btn-primary d-lg-none sidebar-toggle mb-3" type="button" 
+                            data-bs-toggle="collapse" data-bs-target="#sidebar-content">
+                        <i class="bi bi-filter"></i> Filters
+                    </button>
+
+                    <div class="collapse d-lg-block" id="sidebar-content">
+                        <!-- Tab Navigation -->
+                        <ul class="nav nav-tabs sidebar-tabs" id="main-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="geo-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#geo-panel" type="button" role="tab"
+                                        py-click="on_tab_change('geography')">
+                                    By Geography
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="coicop-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#coicop-panel" type="button" role="tab"
+                                        py-click="on_tab_change('coicop')">
+                                    By ECOICOP
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="tab-content">
+                            <!-- Tab 1: By Geography -->
+                            <div class="tab-pane fade show active" id="geo-panel" role="tabpanel">
+                                <!-- Geography Dropdown -->
+                                <div class="control-group">
+                                    <label for="geo-select" class="form-label">Geography</label>
+                                    <select class="form-select" id="geo-select" py-change="on_geo_select()">
+                                        <option value="">Select a geography...</option>
+                                    </select>
+                                </div>
+
+                                <!-- COICOP Checkboxes with Search -->
+                                <div class="control-group">
+                                    <label class="form-label">COICOP Categories</label>
+                                    <input type="text" class="form-control mb-2" id="coicop-search-geo" 
+                                           placeholder="Search categories..." py-input="on_coicop_search_geo()">
+                                    <div class="checkbox-list" id="coicop-list-geo">
+                                        <!-- Populated by Python -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 2: By ECOICOP -->
+                            <div class="tab-pane fade" id="coicop-panel" role="tabpanel">
+                                <!-- COICOP Dropdown -->
+                                <div class="control-group">
+                                    <label for="coicop-select" class="form-label">ECOICOP Category</label>
+                                    <select class="form-select" id="coicop-select" py-change="on_coicop_select()">
+                                        <option value="">Select a category...</option>
+                                    </select>
+                                </div>
+
+                                <!-- Geography Checkboxes with Search -->
+                                <div class="control-group">
+                                    <label class="form-label">Geographies</label>
+                                    <input type="text" class="form-control mb-2" id="geo-search-coicop" 
+                                           placeholder="Search geographies..." py-input="on_geo_search_coicop()">
+                                    <div class="checkbox-list" id="geo-list-coicop">
+                                        <!-- Populated by Python -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Controls -->
+                        <div class="common-controls">
+                            <!-- Unit Dropdown -->
+                            <div class="control-group">
+                                <label for="unit-select" class="form-label">Unit</label>
+                                <select class="form-select" id="unit-select" py-change="on_unit_select()">
+                                    <option value="">Select a unit...</option>
+                                </select>
+                            </div>
+
+                            <!-- Date Range -->
+                            <div class="control-group">
+                                <label class="form-label">Date Range</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="month" class="form-control" id="from-date" 
+                                               placeholder="From" py-change="on_date_change()">
+                                        <small class="text-muted">From (YYYY-MM)</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="month" class="form-control" id="to-date" 
+                                               placeholder="To" py-change="on_date_change()">
+                                        <small class="text-muted">To (YYYY-MM)</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Export Button -->
+                            <div class="control-group">
+                                <button class="btn btn-success w-100" id="export-btn" 
+                                        py-click="on_export_click()" disabled>
+                                    <i class="bi bi-file-earmark-excel me-2"></i>
+                                    Export to Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9 col-xl-9 content-col">
+                <div class="main-content">
+                    <!-- Chart Container -->
+                    <div class="chart-container">
+                        <div id="chart-area">
+                            <div class="placeholder-message">
+                                <i class="bi bi-graph-up"></i>
+                                <p>Select a geography or ECOICOP category to view the chart</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Legend Container -->
+                    <div class="legend-container" id="legend-area">
+                        <!-- Legend will be rendered here -->
+                    </div>
+
+                    <!-- Data Table Container -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-table me-2"></i>
+                                Data Table
+                            </h5>
+                            <span class="badge bg-secondary" id="row-count">0 rows</span>
+                        </div>
+                        <div class="table-scroll" id="table-area">
+                            <div class="placeholder-message">
+                                <i class="bi bi-table"></i>
+                                <p>No data to display</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading data...</p>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- PyScript JS -->
+    <script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
+    <!-- Main Python Script -->
+    <script type="py" src="app.py" config="pyscript_config.json"></script>
+</body>
+</html>
