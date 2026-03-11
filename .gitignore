@@ -163,3 +163,4 @@ cython_debug/
 storage/
 
 src/assets/data/hicp_data.parquet
+!uv.lock
