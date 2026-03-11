@@ -163,3 +163,4 @@ cython_debug/
 storage/
 
 *.csv
+src/assets/data/hicp_data.parquet
