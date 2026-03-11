@@ -2,6 +2,11 @@ import flet as ft
 import flet_charts as fch
 import pandas as pd
 import duckdb
+import sdmx
+import time
+import asyncio
+import threading
+from zoneinfo import ZoneInfo
 from datetime import datetime
 from pathlib import Path
 from io import BytesIO
@@ -83,6 +88,7 @@ class InflationDataExplorer:
         self.geo_checkbox_container_tab2: ft.Column | None = None
         self.chart_title: ft.Text | None = None
         self.current_selection_name: str = ""
+        self.is_updating: bool = False
     
     def get_last_update_date(self) -> str:
         """Read the last update date from file."""
@@ -568,6 +574,102 @@ class InflationDataExplorer:
         """Handle Query button click - execute the data query."""
         self.update_table()
     
+    async def on_update_click(self, e):
+        """Handle data update button click."""
+        if self.is_updating:
+            return
+            
+        self.is_updating = True
+        self.update_button.disabled = True
+        self.update_button.icon = ft.Icons.HOURGLASS_EMPTY
+        self.update_button.tooltip = "Update in progress..."
+        self.page.update()
+        
+        # Run the update in a background thread to keep UI responsive
+        # We use asyncio.to_thread for this in modern Python
+        try:
+            await asyncio.to_thread(self.run_data_update)
+            
+            # Update last update text
+            new_date = self.get_last_update_date()
+            self.last_update_text.value = f"Last update: {new_date}"
+            
+            # Refresh data if currently viewing
+            if self.current_data is not None:
+                self.update_table()
+                
+            self.page.show_snackbar(ft.SnackBar(ft.Text("Data update complete!")))
+        except Exception as ex:
+            self.page.show_snackbar(ft.SnackBar(ft.Text(f"Update failed: {ex}")))
+        finally:
+            self.is_updating = False
+            self.update_button.disabled = False
+            self.update_button.icon = ft.Icons.REFRESH
+            self.update_button.tooltip = "Update data now"
+            self.page.update()
+
+    def run_data_update(self):
+        """Background task to download new data."""
+        DATAFLOW_ID = "PRC_HICP_MINR"
+        OUTPUT_DIR = Path("src", "assets", "data")
+        MAPS_DIR = Path("src", "assets", "maps")
+        FREQ = "M"
+        START_PERIOD = "2000-01"
+        
+        client = sdmx.Client("ESTAT")
+        code_map = pd.read_csv(MAPS_DIR / "coicop18.csv")
+        
+        try:
+            dsd_response = client.get(resource_type="datastructure", resource_id=DATAFLOW_ID)
+            dsd = dsd_response.structure[DATAFLOW_ID]
+            dimensions = list(dsd.dimensions.components)
+            
+            all_data = []
+            geo_key = "EU+EA+BE+BG+CZ+DK+DE+EE+IE+EL+ES+FR+HR+IT+CY+LV+LT+LU+HU+MT+NL+AT+PL+PT+RO+SI+SK+FI+SE"
+            unit_key = "I25+RCH_A+RCH_M"
+            
+            # Find dimension IDs once
+            freq_dim_id = next(d.id for d in dimensions if d.id.lower() == "freq")
+            geo_dim_id = next(d.id for d in dimensions if d.id.lower() == "geo")
+            item_dim_id = next(d.id for d in dimensions if "coicop" in d.id.lower())
+            unit_dim_id = next((d.id for d in dimensions if "unit" in d.id.lower()), None)
+            
+            for i, item_id in enumerate(code_map["code"]):
+                # Simple progress logging to console
+                print(f"Updating {i+1}/{len(code_map['code'])}: {item_id}")
+                
+                key = {
+                    freq_dim_id: FREQ,
+                    item_dim_id: item_id,
+                    geo_dim_id: geo_key,
+                }
+                if unit_dim_id:
+                    key[unit_dim_id] = unit_key
+                
+                try:
+                    response = client.get(resource_type="data", resource_id=DATAFLOW_ID, key=key, params={"startPeriod": START_PERIOD})
+                    data = response.data
+                    if data:
+                        df = sdmx.to_pandas(data).reset_index()
+                        all_data.append(df)
+                    time.sleep(0.3) # Respect API
+                except Exception as e:
+                    print(f"Error for {item_id}: {e}")
+            
+            if all_data:
+                combined_df = pd.concat(all_data, ignore_index=True)
+                combined_df = combined_df.drop_duplicates(keep="last")
+                combined_df = combined_df.drop(columns=['freq'], errors='ignore')
+                combined_df.to_parquet(OUTPUT_DIR / "hicp_data.parquet", index=False)
+                
+                # Update last update file
+                update_file = Path("src", "assets", "last_update.txt")
+                now = datetime.now(ZoneInfo("Europe/Rome"))
+                update_file.write_text(now.strftime("%Y-%m-%d %H:%M %Z"))
+        except Exception as e:
+            print(f"Global update error: {e}")
+            raise e
+
     # ===== Search Filter Functions =====
     
     def filter_coicop_checkboxes_tab1(self, e):
@@ -726,6 +828,13 @@ class InflationDataExplorer:
             weight=ft.FontWeight.BOLD,
             text_align=ft.TextAlign.CENTER,
         )
+
+        self.update_button = ft.IconButton(
+            icon=ft.Icons.REFRESH,
+            tooltip="Update data now",
+            on_click=self.on_update_click,
+            icon_size=20,
+        )
     
     def main(self, page: ft.Page):
         """Main entry point for the Flet application."""
@@ -861,6 +970,7 @@ class InflationDataExplorer:
                 ft.Row([
                     self.last_update_icon,
                     self.last_update_text,
+                    self.update_button,
                 ], spacing=5),
                 self.theme_toggle_button,
             ], 
