@@ -39,3 +39,6 @@ jobs:
           tags: |
             paluigi/inflation-web:${{ inputs.version_tag }}
             paluigi/inflation-web:latest
+          # Enable BuildKit cache for --mount=type=cache in Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
