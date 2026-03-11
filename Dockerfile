@@ -36,4 +36,4 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 EXPOSE 8000
 
 # Run the Flet application
-CMD ["uv", "run", "python", "-m", "flet", "run", "src/main.py", "--web", "--port", "8000"]
+CMD ["uv", "run", "flet", "run", "src/main.py", "--web", "--port", "8000"]
