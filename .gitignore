@@ -162,4 +162,4 @@ cython_debug/
 # Flet
 storage/
 
-*.csv
+src/assets/data/hicp_data.parquet

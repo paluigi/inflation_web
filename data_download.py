@@ -11,8 +11,8 @@ from tenacity import retry, stop_after_attempt, wait_random_exponential
 # ===========================
 
 @retry(stop=stop_after_attempt(7),wait= wait_random_exponential(multiplier=1, max=60), reraise=True)
-def download_data(item_id, dimensions, FREQ, START_PERIOD, DATAFLOW_ID, OUTPUT_DIR):
-    """Download data for a specific ECOICOPv2 item and save to CSV."""
+def download_data(item_id, dimensions, FREQ, START_PERIOD, DATAFLOW_ID):
+    """Download data for a specific ECOICOPv2 item and return DataFrame."""
     
     geo_key = "EU+EA+BE+BG+CZ+DK+DE+EE+IE+EL+ES+FR+HR+IT+CY+LV+LT+LU+HU+MT+NL+AT+PL+PT+RO+SI+SK+FI+SE"
     unit_key = "I25+RCH_A+RCH_M"
@@ -42,21 +42,19 @@ def download_data(item_id, dimensions, FREQ, START_PERIOD, DATAFLOW_ID, OUTPUT_D
 
     if data is None:
         print("No data found.")
-        return False
+        return None
 
     df = sdmx.to_pandas(data)
 
     if df.empty:
         print("Empty dataset.")
-        return False
+        return None
 
     df = df.reset_index()
-
-    output_file = OUTPUT_DIR / f"{item_id}.csv"
-    df.to_csv(output_file, index=False)
-    print(f"Saved {output_file}")
+    print(f"Downloaded data for {item_id}")
 
     time.sleep(0.3)
+    return df
 
 
 # ===========================
@@ -105,45 +103,33 @@ dimensions = list(dsd.dimensions.components)
 # DOWNLOAD LOOP
 # ===========================
 
+all_data = []
 for i, item_id in enumerate(code_map["code"]):
     print(f"\nProcessing item {i+1}/{len(code_map['code'])}: {item_id}")
 
     try:
-        download_data(item_id, dimensions, FREQ, START_PERIOD, DATAFLOW_ID, OUTPUT_DIR)
+        df = download_data(item_id, dimensions, FREQ, START_PERIOD, DATAFLOW_ID)
+        if df is not None:
+            all_data.append(df)
 
     except Exception as e:
         print(f"Error for item {item_id}: {e}")
         continue
 
-print("\nDone.")
-
 # ===========================
-# GEO-BASED FILE GENERATION
+# SAVE TO PARQUET
 # ===========================
-
-geo_list = ["EU", "EA", "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO", "SI", "SK", "FI", "SE"]
-
-print("\nGenerating geo-based files...")
-
-all_data = []
-for item_file in OUTPUT_DIR.glob("*.csv"):
-    df = pd.read_csv(item_file)
-    all_data.append(df)
 
 if all_data:
     combined_df = pd.concat(all_data, ignore_index=True)
     combined_df = combined_df.drop_duplicates(keep="last")
-
-    for geo in geo_list:
-        geo_df = combined_df[combined_df["geo"] == geo]
-        if not geo_df.empty:
-            output_file = OUTPUT_DIR / f"{geo}.csv"
-            geo_df.to_csv(output_file, index=False)
-            print(f"Saved {output_file}")
-        else:
-            print(f"No data for geo: {geo}")
+    combined_df = combined_df.drop(columns=['freq'], errors='ignore')
+    
+    output_file = OUTPUT_DIR / "hicp_data.parquet"
+    combined_df.to_parquet(output_file, index=False)
+    print(f"\nSaved {output_file}")
 else:
-    print("No data to process for geo-based files.")
+    print("No data to process.")
 
 # ===========================
 # SAVE LAST UPDATE DATE

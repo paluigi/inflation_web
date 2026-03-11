@@ -1,8 +1,13 @@
 import flet as ft
 import flet_charts as fch
 import pandas as pd
+import duckdb
+import sdmx
+import time
+import asyncio
+import threading
+from zoneinfo import ZoneInfo
 from datetime import datetime
-import os
 from pathlib import Path
 from io import BytesIO
 
@@ -81,6 +86,9 @@ class InflationDataExplorer:
         self.geo_search_tab2: ft.TextField | None = None
         self.coicop_checkbox_container_tab1: ft.Column | None = None
         self.geo_checkbox_container_tab2: ft.Column | None = None
+        self.chart_title: ft.Text | None = None
+        self.current_selection_name: str = ""
+        self.is_updating: bool = False
     
     def get_last_update_date(self) -> str:
         """Read the last update date from file."""
@@ -143,7 +151,7 @@ class InflationDataExplorer:
         self.page.update()
     
     def load_and_filter_data(self) -> pd.DataFrame:
-        """Load and filter data based on current tab and selections.
+        """Load and filter data from parquet file using DuckDB.
         
         Returns data in wide format with TIME_PERIOD as rows and 
         geos/COICOPs as columns.
@@ -156,47 +164,51 @@ class InflationDataExplorer:
         if active_tab == 0:  # Tab 1: multiple COICOPs, single geo
             if not self.tab1_selected_geo or len(self.tab1_selected_coicops) == 0:
                 return pd.DataFrame()
-            
-            # Load geo file
-            file_path = f"src/assets/data/{self.tab1_selected_geo}.csv"
             filter_column = 'coicop18'
             filter_values = self.tab1_selected_coicops
-            select_columns = ['coicop18', 'unit', 'TIME_PERIOD', 'value']
+            geo_filter = f"'{self.tab1_selected_geo}'"
+            coicop_filter = tuple(self.tab1_selected_coicops)
+            if len(coicop_filter) == 1:
+                coicop_filter = f"('{coicop_filter[0]}')"
             
         else:  # Tab 2: single COICOP, multiple geos
             if not self.tab2_selected_coicop or len(self.tab2_selected_geos) == 0:
                 return pd.DataFrame()
-            
-            # Load COICOP file
-            file_path = f"src/assets/data/{self.tab2_selected_coicop}.csv"
             filter_column = 'geo'
             filter_values = self.tab2_selected_geos
-            select_columns = ['geo', 'unit', 'TIME_PERIOD', 'value']
+            coicop_filter = f"'{self.tab2_selected_coicop}'"
+            geo_filter = tuple(self.tab2_selected_geos)
+            if len(geo_filter) == 1:
+                geo_filter = f"('{geo_filter[0]}')"
         
-        # Load file
-        if not os.path.exists(file_path):
-            return pd.DataFrame()
+        # Build DuckDB query
+        parquet_path = "src/assets/data/hicp_data.parquet"
+        
+        query = f"""
+        SELECT {filter_column}, unit, TIME_PERIOD, value
+        FROM '{parquet_path}'
+        WHERE unit = '{self.selected_unit}'
+        """
+        
+        # Add geo filter based on tab
+        if active_tab == 0:
+            query += f" AND geo = {geo_filter}"
+            query += f" AND coicop18 IN {coicop_filter}"
+        else:
+            query += f" AND coicop18 = {coicop_filter}"
+            query += f" AND geo IN {geo_filter}"
+        
+        # Add date filters if specified
+        if self.from_date:
+            query += f" AND TIME_PERIOD >= '{self.from_date}'"
+        if self.to_date:
+            query += f" AND TIME_PERIOD <= '{self.to_date}'"
         
         try:
-            df = pd.read_csv(file_path)
+            result_df = duckdb.query(query).df()
         except Exception as e:
-            print(f"Error loading {file_path}: {e}")
+            print(f"Error querying parquet file: {e}")
             return pd.DataFrame()
-        
-        # Apply filters
-        filtered_df = df[
-            (df[filter_column].isin(filter_values)) &
-            (df['unit'] == self.selected_unit)
-        ]
-        
-        # Apply date filter if specified
-        if self.from_date:
-            filtered_df = filtered_df[filtered_df['TIME_PERIOD'] >= self.from_date]
-        if self.to_date:
-            filtered_df = filtered_df[filtered_df['TIME_PERIOD'] <= self.to_date]
-        
-        # Select relevant columns
-        result_df = filtered_df[select_columns]
         
         # Pivot to wide format: TIME_PERIOD as rows, filter_column as columns, value as cell values
         if not result_df.empty:
@@ -395,6 +407,26 @@ class InflationDataExplorer:
         self.data_display.controls.clear()
         self.current_table = None
         
+        active_tab = self.tabs.selected_index
+        title_text = ""
+        selection_name = ""
+        
+        if active_tab == 0:  # Tab 1: By Geography (showing multiple COICOPs)
+            if self.tab1_selected_geo:
+                geo_name = self.geo_df[self.geo_df['code'] == self.tab1_selected_geo]['name'].values
+                if len(geo_name) > 0:
+                    selection_name = geo_name[0]
+                    title_text = f"Inflation for {selection_name}"
+        else:  # Tab 2: By ECOICOP (showing multiple Geographies)
+            if self.tab2_selected_coicop:
+                coicop_name = self.coicop_df[self.coicop_df['code'] == self.tab2_selected_coicop]['name'].values
+                if len(coicop_name) > 0:
+                    selection_name = coicop_name[0]
+                    title_text = f"Inflation for {selection_name}"
+        
+        self.chart_title.value = title_text
+        self.current_selection_name = selection_name
+        
         filtered_data = self.load_and_filter_data()
         
         if filtered_data.empty:
@@ -405,6 +437,15 @@ class InflationDataExplorer:
                 )
             )
         else:
+            # Add the chart title
+            if self.chart_title.value:
+                self.data_display.controls.append(
+                    ft.Container(
+                        content=self.chart_title,
+                        padding=ft.Padding.only(left=20, bottom=5),
+                    )
+                )
+
             # Get value columns for chart and legend
             date_col = "DATE"
             value_cols = [col for col in filtered_data.columns if col != date_col]
@@ -471,7 +512,11 @@ class InflationDataExplorer:
     async def export_to_excel(self, e):
         """Export current data to Excel."""
         if self.current_data is not None and not self.current_data.empty:
-            filename = f"inflation_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            name_slug = self.current_selection_name.replace(" ", "_").replace("/", "_").lower()
+            if name_slug:
+                filename = f"inflation_data_{name_slug}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+            else:
+                filename = f"inflation_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
             buffer = BytesIO()
             self.current_data.to_excel(buffer, index=False)
             excel_bytes = buffer.getvalue()
@@ -496,42 +541,135 @@ class InflationDataExplorer:
     def update_selected_coicops_tab1(self, e):
         """Handle COICOP checkbox changes for Tab 1."""
         self.tab1_selected_coicops = [cb.data for cb in self.coicop_checkboxes_tab1 if cb.value]
-        self.update_table()
     
     def on_geo_change_tab1(self, e):
         """Handle geo dropdown change for Tab 1."""
         self.tab1_selected_geo = e.control.value if e.control.value else None
-        self.update_table()
     
     # ===== Tab 2 Event Handlers =====
     
     def on_coicop_change_tab2(self, e):
         """Handle COICOP dropdown change for Tab 2."""
         self.tab2_selected_coicop = e.control.value if e.control.value else None
-        self.update_table()
     
     def update_selected_geos_tab2(self, e):
         """Handle geo checkbox changes for Tab 2."""
         self.tab2_selected_geos = [cb.data for cb in self.geo_checkboxes_tab2 if cb.value]
-        self.update_table()
     
     # ===== Common Event Handlers =====
     
     def on_unit_change(self, e):
         """Handle unit dropdown change."""
         self.selected_unit = e.control.value if e.control.value else None
-        self.update_table()
     
     def update_from_date(self, e):
         """Handle from date input change."""
         self.from_date = e.control.value
-        self.update_table()
     
     def update_to_date(self, e):
         """Handle to date input change."""
         self.to_date = e.control.value
+    
+    def on_query_click(self, e):
+        """Handle Query button click - execute the data query."""
         self.update_table()
     
+    async def on_update_click(self, e):
+        """Handle data update button click."""
+        if self.is_updating:
+            return
+            
+        self.is_updating = True
+        self.update_button.disabled = True
+        self.update_button.icon = ft.Icons.HOURGLASS_EMPTY
+        self.update_button.tooltip = "Update in progress..."
+        self.page.update()
+        
+        # Run the update in a background thread to keep UI responsive
+        # We use asyncio.to_thread for this in modern Python
+        try:
+            await asyncio.to_thread(self.run_data_update)
+            
+            # Update last update text
+            new_date = self.get_last_update_date()
+            self.last_update_text.value = f"Last update: {new_date}"
+            
+            # Refresh data if currently viewing
+            if self.current_data is not None:
+                self.update_table()
+                
+            self.page.show_snackbar(ft.SnackBar(ft.Text("Data update complete!")))
+        except Exception as ex:
+            self.page.show_snackbar(ft.SnackBar(ft.Text(f"Update failed: {ex}")))
+        finally:
+            self.is_updating = False
+            self.update_button.disabled = False
+            self.update_button.icon = ft.Icons.REFRESH
+            self.update_button.tooltip = "Update data now"
+            self.page.update()
+
+    def run_data_update(self):
+        """Background task to download new data."""
+        DATAFLOW_ID = "PRC_HICP_MINR"
+        OUTPUT_DIR = Path("src", "assets", "data")
+        MAPS_DIR = Path("src", "assets", "maps")
+        FREQ = "M"
+        START_PERIOD = "2000-01"
+        
+        client = sdmx.Client("ESTAT")
+        code_map = pd.read_csv(MAPS_DIR / "coicop18.csv")
+        
+        try:
+            dsd_response = client.get(resource_type="datastructure", resource_id=DATAFLOW_ID)
+            dsd = dsd_response.structure[DATAFLOW_ID]
+            dimensions = list(dsd.dimensions.components)
+            
+            all_data = []
+            geo_key = "EU+EA+BE+BG+CZ+DK+DE+EE+IE+EL+ES+FR+HR+IT+CY+LV+LT+LU+HU+MT+NL+AT+PL+PT+RO+SI+SK+FI+SE"
+            unit_key = "I25+RCH_A+RCH_M"
+            
+            # Find dimension IDs once
+            freq_dim_id = next(d.id for d in dimensions if d.id.lower() == "freq")
+            geo_dim_id = next(d.id for d in dimensions if d.id.lower() == "geo")
+            item_dim_id = next(d.id for d in dimensions if "coicop" in d.id.lower())
+            unit_dim_id = next((d.id for d in dimensions if "unit" in d.id.lower()), None)
+            
+            for i, item_id in enumerate(code_map["code"]):
+                # Simple progress logging to console
+                print(f"Updating {i+1}/{len(code_map['code'])}: {item_id}")
+                
+                key = {
+                    freq_dim_id: FREQ,
+                    item_dim_id: item_id,
+                    geo_dim_id: geo_key,
+                }
+                if unit_dim_id:
+                    key[unit_dim_id] = unit_key
+                
+                try:
+                    response = client.get(resource_type="data", resource_id=DATAFLOW_ID, key=key, params={"startPeriod": START_PERIOD})
+                    data = response.data
+                    if data:
+                        df = sdmx.to_pandas(data).reset_index()
+                        all_data.append(df)
+                    time.sleep(0.3) # Respect API
+                except Exception as e:
+                    print(f"Error for {item_id}: {e}")
+            
+            if all_data:
+                combined_df = pd.concat(all_data, ignore_index=True)
+                combined_df = combined_df.drop_duplicates(keep="last")
+                combined_df = combined_df.drop(columns=['freq'], errors='ignore')
+                combined_df.to_parquet(OUTPUT_DIR / "hicp_data.parquet", index=False)
+                
+                # Update last update file
+                update_file = Path("src", "assets", "last_update.txt")
+                now = datetime.now(ZoneInfo("Europe/Rome"))
+                update_file.write_text(now.strftime("%Y-%m-%d %H:%M %Z"))
+        except Exception as e:
+            print(f"Global update error: {e}")
+            raise e
+
     # ===== Search Filter Functions =====
     
     def filter_coicop_checkboxes_tab1(self, e):
@@ -672,10 +810,30 @@ class InflationDataExplorer:
             input_filter=ft.InputFilter(allow=True, regex_string=r"^[0-9]{0,4}(-[0-9]{0,2})?$", replacement_string="")
         )
         
+        self.query_button = ft.FilledButton(
+            "Query Data",
+            on_click=self.on_query_click,
+            icon=ft.Icons.SEARCH
+        )
+        
         self.export_button = ft.Button(
             "Export to Excel",
             on_click=self.export_to_excel,
             icon=ft.Icons.FILE_DOWNLOAD
+        )
+
+        self.chart_title = ft.Text(
+            value="",
+            size=18,
+            weight=ft.FontWeight.BOLD,
+            text_align=ft.TextAlign.CENTER,
+        )
+
+        self.update_button = ft.IconButton(
+            icon=ft.Icons.REFRESH,
+            tooltip="Update data now",
+            on_click=self.on_update_click,
+            icon_size=20,
         )
     
     def main(self, page: ft.Page):
@@ -762,6 +920,8 @@ class InflationDataExplorer:
             ft.Container(height=10),
             ft.Row([self.from_date_input, self.to_date_input]),
             ft.Container(height=10),
+            self.query_button,
+            ft.Container(height=10),
             self.export_button,
         ], 
             scroll=ft.ScrollMode.AUTO,
@@ -810,6 +970,7 @@ class InflationDataExplorer:
                 ft.Row([
                     self.last_update_icon,
                     self.last_update_text,
+                    self.update_button,
                 ], spacing=5),
                 self.theme_toggle_button,
             ], 
