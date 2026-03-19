@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euro Area Inflation Dashboard</title>
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f4f7f9;
+            --nav-bg: #2c3e50;
+            --sidebar-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #7f8c8d;
+            --border-color: #e0e0e0;
+            --card-bg: #ffffff;
+            --btn-primary: #3498db;
+            --btn-hover: #2980b9;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a2e;
+            --nav-bg: #16213e;
+            --sidebar-bg: #0f3460;
+            --text-color: #e9e9e9;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
+            --card-bg: #16213e;
+        }
+
+        body {
+            margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+            display: flex; flex-direction: column; height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Navbar */
+        nav {
+            background-color: var(--nav-bg); color: white;
+            padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10;
+        }
+        .nav-links { display: flex; gap: 15px; }
+        .theme-toggle { cursor: pointer; background: none; border: 1px solid white; color: white; padding: 5px 10px; border-radius: 4px; }
+
+        /* Layout */
+        .container { display: flex; flex: 1; overflow: hidden; }
+
+        /* Sidebar */
+        aside {
+            width: 320px; background-color: var(--sidebar-bg); padding: 20px;
+            border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 15px;
+            overflow-y: auto;
+        }
+        .last-update { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+
+        /* Tabs */
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 10px; }
+        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; background: transparent; border: none; color: var(--text-muted); font-weight: bold; }
+        .tab.active { color: var(--btn-primary); border-bottom: 2px solid var(--btn-primary); margin-bottom: -2px; }
+        .tab-content { display: none; flex-direction: column; gap: 15px; }
+        .tab-content.active { display: flex; }
+
+        /* Controls */
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .control-group label { font-size: 0.9rem; font-weight: bold; }
+        .date-inputs { display: flex; gap: 10px; }
+        .date-inputs input { flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); }
+
+        button.action-btn { padding: 12px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; color: white; background-color: var(--btn-primary); }
+        button.action-btn:hover { background-color: var(--btn-hover); }
+        button.action-btn:disabled { background-color: var(--text-muted); cursor: not-allowed; }
+        #btn-export { background-color: #27ae60; }
+
+        /* Main Area */
+        main { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border-color); }
+        .chart-container { height: 450px; position: relative; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        th { background-color: rgba(0,0,0,0.05); }
+
+        /* Tom Select Dark Mode Overrides */
+        [data-theme="dark"] .ts-control { background-color: var(--card-bg); border-color: var(--border-color); color: var(--text-color); }
+        [data-theme="dark"] .ts-dropdown { background-color: var(--card-bg); border-color: var(--border-color); color: var(--text-color); }
+        [data-theme="dark"] .ts-dropdown .active { background-color: #2c3e50; color: white; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="font-size: 1.2rem; font-weight: bold;">Inflation Dashboard</div>
+        <div class="nav-links">
+            <button class="theme-toggle" id="theme-toggle">Change theme</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside>
+            <div class="last-update" id="last-update">Last Update: Loading...</div>
+
+            <div class="tabs">
+                <button class="tab active" data-target="tab1">Multi-Country</button>
+                <button class="tab" data-target="tab2">Multi-COICOP</button>
+            </div>
+
+            <div id="tab1" class="tab-content active">
+                <div class="control-group">
+                    <label>Select COICOP:</label>
+                    <select id="t1-coicop" placeholder="Search code or name..."></select>
+                </div>
+                <div class="control-group">
+                    <label>Select Geographies (Multiple):</label>
+                    <select id="t1-geo" multiple placeholder="Search code or name..."></select>
+                </div>
+            </div>
+
+            <div id="tab2" class="tab-content">
+                <div class="control-group">
+                    <label>Select Geography:</label>
+                    <select id="t2-geo" placeholder="Search code or name..."></select>
+                </div>
+                <div class="control-group">
+                    <label>Select COICOPs (Multiple):</label>
+                    <select id="t2-coicop" multiple placeholder="Search code or name..."></select>
+                </div>
+            </div>
+
+            <div class="control-group" style="margin-top: 10px;">
+                <label>Unit of Measure:</label>
+                <select id="shared-unit" placeholder="Select Unit..."></select>
+            </div>
+
+            <div class="control-group">
+                <label>Time Period (yyyy or yyyy-mm):</label>
+                <div class="date-inputs">
+                    <input type="text" id="date-from" placeholder="From (e.g. 2020)">
+                    <input type="text" id="date-to" placeholder="To (e.g. 2024-12)">
+                </div>
+            </div>
+
+            <button id="btn-query" class="action-btn" disabled>Launch Query</button>
+            <button id="btn-export" class="action-btn" disabled>Export to Excel</button>
+            <div id="status" style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">Initializing...</div>
+        </aside>
+
+        <main>
+            <div class="card chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+            <div class="card">
+                <h3>Data Output</h3>
+                <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+                    <table id="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time Period</th>
+                                <th>Values...</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="2" style="text-align:center; padding: 20px; color: var(--text-muted);">
+                                    No data loaded yet. Select your filters and click "Launch Query".
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+
+        import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.28.0/+esm';
+
+        // State Management
+        let db, conn, myChart = null;
+        let currentData = [];
+        let activeTab = 'tab1';
+        
+        // Dictionaries for labels/titles
+        const maps = { geo: {}, coicop: {}, unit: {} };
+        const chartColors = ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c', '#34495e'];
+
+        const UI = {
+            btnQuery: document.getElementById('btn-query'),
+            btnExport: document.getElementById('btn-export'),
+            status: document.getElementById('status'),
+            tbody: document.querySelector('#data-table tbody'),
+            ctx: document.getElementById('myChart').getContext('2d'),
+            t1Coicop: null, t1Geo: null, t2Geo: null, t2Coicop: null, sharedUnit: null
+        };
+
+        // --- 1. Initialization ---
+        async function init() {
+            try {
+                // Initialize DuckDB
+                const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+                const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+                const worker = new Worker(URL.createObjectURL(new Blob([`importScripts("${bundle.mainWorker}");`], {type: 'text/javascript'})));
+                const logger = new duckdb.ConsoleLogger();
+                db = new duckdb.AsyncDuckDB(logger, worker);
+                await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+                conn = await db.connect();
+
+                // Fetch Update Time
+                fetch('./assets/last_update.txt')
+                    .then(res => res.ok ? res.text() : "Unknown")
+                    .then(text => document.getElementById('last-update').innerText = `Last Update: ${text}`)
+                    .catch(() => {});
+
+                // Load CSV Maps
+                UI.status.innerText = "Loading dictionaries...";
+                const [geoData, coicopData, unitData] = await Promise.all([
+                    fetchCSV('./assets/maps/geo.csv'),
+                    fetchCSV('./assets/maps/coicop18.csv'),
+                    fetchCSV('./assets/maps/unit.csv')
+                ]);
+
+                // Initialize Tom Selects and populate dictionaries
+                UI.t1Coicop = initSelect('#t1-coicop', coicopData, 'coicop', false);
+                UI.t1Geo = initSelect('#t1-geo', geoData, 'geo', true);
+                UI.t2Geo = initSelect('#t2-geo', geoData, 'geo', false);
+                UI.t2Coicop = initSelect('#t2-coicop', coicopData, 'coicop', true);
+                UI.sharedUnit = initSelect('#shared-unit', unitData, 'unit', false);
+
+                // Set default selections
+                if(coicopData.length > 0) UI.t1Coicop.setValue(coicopData[1].code);
+                if(unitData.length > 0) UI.sharedUnit.setValue(unitData[1].code);
+
+                UI.status.innerText = "Engine Ready.";
+                UI.btnQuery.disabled = false;
+            } catch (err) {
+                console.error(err);
+                UI.status.innerText = "Error: " + err.message;
+            }
+        }
+
+        // --- Helper: Fetch & Parse CSV securely ---
+        async function fetchCSV(path) {
+            const res = await fetch(path);
+            if (!res.ok) throw new Error(`Failed to load ${path}`);
+            const text = await res.text();
+            
+            return new Promise(resolve => {
+                Papa.parse(text, {
+                    header: true, skipEmptyLines: true,
+                    complete: function(results) { resolve(results.data); }
+                });
+            });
+        }
+
+        // --- Helper: Init Tom Select ---
+        function initSelect(selector, data, mapKey, isMultiple) {
+            // Map data into expected format for Tom Select and save to local dictionaries
+            const options = data.map(row => {
+                maps[mapKey][row.code] = row.name; 
+                return { value: row.code, text: `${row.code} - ${row.name}` };
+            });
+
+            return new TomSelect(selector, {
+                options: options,
+                maxItems: isMultiple ? null : 1,
+                valueField: 'value',
+                labelField: 'text',
+                searchField: ['value', 'text'],
+                plugins: isMultiple ? ['remove_button'] : []
+            });
+        }
+
+        // --- 2. UI Interactions (Tabs & Theme) ---
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                activeTab = tab.getAttribute('data-target');
+                document.getElementById(activeTab).classList.add('active');
+            });
+        });
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            if (myChart) {
+                Chart.defaults.color = isDark ? '#666' : '#e9e9e9'; // Adjust chart text color
+                myChart.update();
+            }
+        });
+
+        // --- 3. Date Parsing Logic ---
+        function parseDateBoundary(dateStr, isEnd) {
+            if (!dateStr) return null;
+            let val = dateStr.trim();
+            if (/^\d{4}$/.test(val)) return isEnd ? `${val}-12` : `${val}-01`;
+            if (/^\d{4}-\d{2}$/.test(val)) return val;
+            return null; // Invalid format
+        }
+
+        // --- 4. Query Execution ---
+        UI.btnQuery.addEventListener('click', async () => {
+            UI.status.innerText = "Querying Data...";
+            UI.btnQuery.disabled = true;
+
+            try {
+                const unit = UI.sharedUnit.getValue();
+                const dFrom = parseDateBoundary(document.getElementById('date-from').value, false);
+                const dTo = parseDateBoundary(document.getElementById('date-to').value, true);
+
+                let whereClauses = [`unit = '${unit}'`];
+                let singleTitleName = "";
+                let groupDimension = "";
+
+                if (activeTab === 'tab1') {
+                    const coicop = UI.t1Coicop.getValue();
+                    const geos = UI.t1Geo.getValue();
+                    if (!coicop || geos.length === 0) throw new Error("Please select a COICOP and at least one Geo.");
+                    
+                    singleTitleName = maps.coicop[coicop];
+                    groupDimension = "geo";
+                    
+                    whereClauses.push(`coicop18 = '${coicop}'`);
+                    whereClauses.push(`geo IN (${geos.map(g => `'${g}'`).join(',')})`);
+                } else {
+                    const geo = UI.t2Geo.getValue();
+                    const coicops = UI.t2Coicop.getValue();
+                    if (!geo || coicops.length === 0) throw new Error("Please select a Geo and at least one COICOP.");
+                    
+                    singleTitleName = maps.geo[geo];
+                    groupDimension = "coicop18";
+
+                    whereClauses.push(`geo = '${geo}'`);
+                    whereClauses.push(`coicop18 IN (${coicops.map(c => `'${c}'`).join(',')})`);
+                }
+
+                if (dFrom) whereClauses.push(`TIME_PERIOD >= '${dFrom}'`);
+                if (dTo) whereClauses.push(`TIME_PERIOD <= '${dTo}'`);
+
+                const parquetUrl = new URL('./assets/data/hicp_data.parquet', window.location.href).href;
+                await db.registerFileURL('hicp_data.parquet', parquetUrl, duckdb.DuckDBDataProtocol.HTTP, false);
+
+                // Pivot the data dynamically based on the selected dimension
+                const query = `
+                    PIVOT (
+                        SELECT TIME_PERIOD as date, ${groupDimension}, CAST(value AS FLOAT) as value 
+                        FROM read_parquet('hicp_data.parquet') 
+                        WHERE ${whereClauses.join(' AND ')} 
+                    ) 
+                    ON ${groupDimension} 
+                    USING first(value) 
+                    ORDER BY date ASC
+                `;
+
+                const result = await conn.query(query);
+                const rawData = result.toArray().map(r => r.toJSON());
+
+                // Transform keys from short codes to descriptive names
+                const mapToUse = groupDimension === 'geo' ? maps.geo : maps.coicop;
+                
+                currentData = rawData.map(row => {
+                    const newRow = { 'Time Period': row.date }; // Rename date column for Excel
+                    
+                    for (const key in row) {
+                        if (key !== 'date') {
+                            // Look up the full name, fallback to code if not found in map
+                            const descriptiveName = mapToUse[key] || key;
+                            newRow[descriptiveName] = row[key];
+                        }
+                    }
+                    return newRow;
+                });
+
+                renderOutput(currentData, singleTitleName, groupDimension);
+                UI.status.innerText = `Loaded ${currentData.length} periods.`;
+                UI.btnExport.disabled = false;
+
+            } catch(err) {
+                console.error(err);
+                UI.status.innerText = "Error: " + err.message;
+            } finally {
+                UI.btnQuery.disabled = false;
+            }
+        });
+
+        // --- 5. Render Data ---
+        function renderOutput(data, titlePrefix, groupDimension) {
+            const tableHead = document.querySelector('#data-table thead');
+            UI.tbody.innerHTML = '';
+            tableHead.innerHTML = '';
+
+            if(!data || data.length === 0) {
+                UI.tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; padding: 20px; color: var(--text-muted);">No data found.</td></tr>`;
+                if(myChart) myChart.destroy();
+                return;
+            }
+
+            // Extract dynamic columns (excluding the new 'Time Period' column)
+            const columns = Object.keys(data[0]).filter(k => k !== 'Time Period');
+
+            // 1. Build Dynamic Table Header
+            let headerHTML = '<tr><th>Time Period</th>';
+            columns.forEach(colName => {
+                headerHTML += `<th>${colName}</th>`; // colName is now "Italy", "France", etc.
+            });
+            headerHTML += '</tr>';
+            tableHead.innerHTML = headerHTML;
+
+            // 2. Build Dynamic Table Body (Newest dates on top)
+            [...data].reverse().forEach(row => {
+                const tr = document.createElement('tr');
+                let rowHTML = `<td><strong>${row['Time Period']}</strong></td>`;
+                columns.forEach(colName => {
+                    const val = row[colName];
+                    rowHTML += `<td>${val !== null && val !== undefined ? val.toFixed(2) : '-'}</td>`;
+                });
+                tr.innerHTML = rowHTML;
+                UI.tbody.appendChild(tr);
+            });
+
+            // 3. Prepare Data for Chart.js
+            const uniqueDates = data.map(d => d['Time Period']);
+            
+            const datasets = columns.map((colName, index) => {
+                return {
+                    label: colName, // The label is now just the descriptive name directly
+                    data: data.map(row => row[colName] !== undefined ? row[colName] : null),
+                    borderColor: chartColors[index % chartColors.length],
+                    backgroundColor: chartColors[index % chartColors.length] + '33',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1,
+                    spanGaps: true // Connect lines if a month is missing
+                };
+            });
+
+            // 4. Render Chart
+            if (myChart) myChart.destroy();
+            
+            const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+            Chart.defaults.color = isDarkMode ? '#e9e9e9' : '#666';
+
+            myChart = new Chart(UI.ctx, {
+                type: 'line',
+                data: { labels: uniqueDates, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        title: { display: true, text: `Inflation Data for: ${titlePrefix}`, font: { size: 16 } },
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // --- 6. Export ---
+        UI.btnExport.addEventListener('click', () => {
+            if (!currentData || currentData.length === 0) return;
+            const worksheet = XLSX.utils.json_to_sheet(currentData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+            XLSX.writeFile(workbook, "euro_inflation_data.xlsx");
+        });
+
+        init();
+    </script>
+</body>
+</html>
