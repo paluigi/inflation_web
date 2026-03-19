@@ -5,7 +5,6 @@ const PRECACHE_ASSETS = [
     './',
     './index.html',
     './manifest.json',
-    './assets/last_update.txt',
     './assets/maps/geo.csv',
     './assets/maps/coicop18.csv',
     './assets/maps/unit.csv'
@@ -47,6 +46,11 @@ self.addEventListener('fetch', event => {
     // We MUST bypass the Service Worker completely for Range requests!
     if (event.request.headers.has('range') || event.request.url.endsWith('.parquet')) {
         return; // Let the browser handle this natively
+    }
+    // NEW: Network-Only strategy for the update indicator so it's always fresh
+    if (event.request.url.endsWith('last_update.txt')) {
+        event.respondWith(fetch(event.request));
+        return;
     }
 
     // For all other requests (HTML, JS, CSS, CSVs), use a "Cache First, fallback to Network" strategy
