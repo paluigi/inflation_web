@@ -1,5 +1,15 @@
 "concept","code","name","level","parent"
 "coicop18","TOTAL","Total",1,"NULL"
+"coicop18","TOT_X_NRG_FOOD","Overall index excluding energy, food, alcohol and tobacco",0,NA
+"coicop18","GD","Goods (overall index excluding services)",0,NA
+"coicop18","FOOD","Food including alcohol and tobacco",0,NA
+"coicop18","FOOD_P","Processed food including alcohol and tobacco",0,NA
+"coicop18","FOOD_P_X_TBC","Processed food excluding tobacco",0,NA
+"coicop18","FOOD_P_X_ALC_TBC","Processed food excluding alcohol and tobacco",0,NA
+"coicop18","FOOD_NP","Unprocessed food",0,NA
+"coicop18","IGD_NNRG","Non-energy industrial goods",0,NA
+"coicop18","NRG","Energy",0,NA
+"coicop18","SERV","Services (overall index excluding goods)",0,NA
 "coicop18","CP01","Food and non-alcoholic beverages",2,"TOTAL"
 "coicop18","CP011","Food",3,"CP01"
 "coicop18","CP0111","Cereals and cereal products (ND)",4,"CP011"
@@ -20,7 +30,6 @@
 "coicop18","CP011224","Meat of poultry, fresh, chilled or frozen",6,"CP01122"
 "coicop18","CP011225","Meat of hares and rabbits, fresh, chilled or frozen",6,"CP01122"
 "coicop18","CP011226","Meat of horses and other equines, fresh, chilled or frozen",6,"CP01122"
-"coicop18","CP011227","Meat of camels and camelids, fresh, chilled or frozen",6,"CP01122"
 "coicop18","CP011229","Other meat, fresh, chilled or frozen",6,"CP01122"
 "coicop18","CP01123","Meat, dried, salted, in brine or smoked (ND)",5,"CP0112"
 "coicop18","CP01124","Offal, blood and other parts of slaughtered animals, fresh, chilled or frozen, dried, salted, in brine or smoked (ND)",5,"CP0112"
@@ -510,22 +519,13 @@
 "coicop18","CP1390","Other services (S)",4,"CP139"
 "coicop18","CP13902","Religious services (S)",5,"CP1390"
 "coicop18","CP13909","Other services n.e.c. (S)",5,"CP1390"
-"coicop18","GD","Goods (overall index excluding services)",0,NA
-"coicop18","FOOD","Food including alcohol and tobacco",0,NA
-"coicop18","FOOD_P","Processed food including alcohol and tobacco",0,NA
-"coicop18","FOOD_P_X_TBC","Processed food excluding tobacco",0,NA
-"coicop18","FOOD_P_X_ALC_TBC","Processed food excluding alcohol and tobacco",0,NA
-"coicop18","FOOD_NP","Unprocessed food",0,NA
 "coicop18","FOOD_S","Seasonal food",0,NA
 "coicop18","IGD","Industrial goods",0,NA
-"coicop18","IGD_NNRG","Non-energy industrial goods",0,NA
 "coicop18","IGD_NNRG_D","Non-energy industrial goods, durables only",0,NA
 "coicop18","IGD_NNRG_SD","Non-energy industrial goods, semi-durables only",0,NA
 "coicop18","IGD_NNRG_ND","Non-energy industrial goods, non-durables only",0,NA
-"coicop18","NRG","Energy",0,NA
 "coicop18","ELC_GAS","Electricity, gas, solid fuels and heat energy",0,NA
 "coicop18","FUEL","Liquid fuels and fuels and lubricants for personal transport equipment",0,NA
-"coicop18","SERV","Services (overall index excluding goods)",0,NA
 "coicop18","SERV_COM","Services related to communication",0,NA
 "coicop18","SERV_HOUS","Services related to housing",0,NA
 "coicop18","SERV_MSC","Services - miscellaneous",0,NA
@@ -541,7 +541,6 @@
 "coicop18","TOT_X_ALC_TBC","Overall index excluding alcohol and tobacco",0,NA
 "coicop18","TOT_X_TBC","Overall index excluding tobacco",0,NA
 "coicop18","TOT_X_NRG","Overall index excluding energy",0,NA
-"coicop18","TOT_X_NRG_FOOD","Overall index excluding energy, food, alcohol and tobacco",0,NA
 "coicop18","TOT_X_NRG_FOOD_NP","Overall index excluding energy and unprocessed food",0,NA
 "coicop18","TOT_X_NRG_FOOD_S","Overall index excluding energy and seasonal food",0,NA
 "coicop18","TOT_X_FUEL","Overall index excluding liquid fuels and lubricants for personal transport equipment",0,NA
