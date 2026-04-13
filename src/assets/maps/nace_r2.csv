@@ -1,0 +1,359 @@
+"concept","code","name","level","parent"
+"nace_r2","B-E36","Industry (except construction, sewerage, waste management and remediation activities)",0,NA
+"nace_r2","B-E36_X_FOOD","Industry (except construction, sewerage, waste management and remediation activities), except food, beverages and tobacco",0,NA
+"nace_r2","B-D","Mining and quarrying; manufacturing; electricity, gas, steam and air conditioning supply",0,NA
+"nace_r2","B_C","Mining and quarrying; manufacturing",0,NA
+"nace_r2","B_C_X_MIG_NRG","Mining and quarrying; manufacturing (except MIG energy)",0,NA
+"nace_r2","B_C_X_FD_MIG_NRG","Mining and quarrying; manufacturing (except MIG energy), except food, beverages and tobacco",0,NA
+"nace_r2","MIG_ING","MIG - intermediate goods",0,NA
+"nace_r2","MIG_NRG","MIG - energy",0,NA
+"nace_r2","MIG_NRG_X_D_E","MIG - energy (except sections D and E)",0,NA
+"nace_r2","MIG_CAG","MIG - capital goods",0,NA
+"nace_r2","MIG_COG","MIG - consumer goods",0,NA
+"nace_r2","MIG_COG_X_FOOD","MIG - consumer goods (except food, beverages and tobacco)",0,NA
+"nace_r2","MIG_DCOG","MIG - durable consumer goods",0,NA
+"nace_r2","MIG_NDCOG","MIG - non-durable consumer goods",0,NA
+"nace_r2","B","Mining and quarrying",0,NA
+"nace_r2","B05","Mining of coal and lignite",0,NA
+"nace_r2","B051","Mining of hard coal",0,NA
+"nace_r2","B052","Mining of lignite",0,NA
+"nace_r2","B06","Extraction of crude petroleum and natural gas",0,NA
+"nace_r2","B061","Extraction of crude petroleum",0,NA
+"nace_r2","B062","Extraction of natural gas",0,NA
+"nace_r2","B07","Mining of metal ores",0,NA
+"nace_r2","B071","Mining of iron ores",0,NA
+"nace_r2","B072","Mining of non-ferrous metal ores",0,NA
+"nace_r2","B08","Other mining and quarrying",0,NA
+"nace_r2","B081","Quarrying of stone, sand and clay",0,NA
+"nace_r2","B089","Mining and quarrying n.e.c.",0,NA
+"nace_r2","B0891","Mining of chemical and fertiliser minerals",0,NA
+"nace_r2","B0892","Extraction of peat",0,NA
+"nace_r2","B0893","Extraction of salt",0,NA
+"nace_r2","B0899","Other mining and quarrying n.e.c.",0,NA
+"nace_r2","B09","Mining support service activities",0,NA
+"nace_r2","C","Manufacturing",0,NA
+"nace_r2","C_HTC_M","Medium high-technology manufacturing",0,NA
+"nace_r2","C_HTC","High-technology manufacturing",0,NA
+"nace_r2","C_LTC_M","Medium low-technology manufacturing",0,NA
+"nace_r2","C_LTC","Low-technology manufacturing",0,NA
+"nace_r2","C10-C12","Manufacture of food products; beverages and tobacco products",0,NA
+"nace_r2","C10_C11","Manufacture of food products and beverages",0,NA
+"nace_r2","C10","Manufacture of food products",0,NA
+"nace_r2","C101","Processing and preserving of meat and production of meat products",0,NA
+"nace_r2","C1011","Processing and preserving of meat",0,NA
+"nace_r2","C1012","Processing and preserving of poultry meat",0,NA
+"nace_r2","C1013","Production of meat and poultry meat products",0,NA
+"nace_r2","C102","Processing and preserving of fish, crustaceans and molluscs",0,NA
+"nace_r2","C103","Processing and preserving of fruit and vegetables",0,NA
+"nace_r2","C1031","Processing and preserving of potatoes",0,NA
+"nace_r2","C1032","Manufacture of fruit and vegetable juice",0,NA
+"nace_r2","C1039","Other processing and preserving of fruit and vegetables",0,NA
+"nace_r2","C104","Manufacture of vegetable and animal oils and fats",0,NA
+"nace_r2","C1041","Manufacture of oils and fats",0,NA
+"nace_r2","C1042","Manufacture of margarine and similar edible fats",0,NA
+"nace_r2","C105","Manufacture of dairy products",0,NA
+"nace_r2","C1051","Operation of dairies and cheese making",0,NA
+"nace_r2","C1052","Manufacture of ice cream",0,NA
+"nace_r2","C106","Manufacture of grain mill products, starches and starch products",0,NA
+"nace_r2","C1061","Manufacture of grain mill products",0,NA
+"nace_r2","C1062","Manufacture of starches and starch products",0,NA
+"nace_r2","C107","Manufacture of bakery and farinaceous products",0,NA
+"nace_r2","C1071","Manufacture of bread; manufacture of fresh pastry goods and cakes",0,NA
+"nace_r2","C1072","Manufacture of rusks and biscuits; manufacture of preserved pastry goods and cakes",0,NA
+"nace_r2","C1073","Manufacture of macaroni, noodles, couscous and similar farinaceous products",0,NA
+"nace_r2","C108","Manufacture of other food products",0,NA
+"nace_r2","C1081","Manufacture of sugar",0,NA
+"nace_r2","C1082","Manufacture of cocoa, chocolate and sugar confectionery",0,NA
+"nace_r2","C1083","Processing of tea and coffee",0,NA
+"nace_r2","C1084","Manufacture of condiments and seasonings",0,NA
+"nace_r2","C1085","Manufacture of prepared meals and dishes",0,NA
+"nace_r2","C1086","Manufacture of homogenised food preparations and dietetic food",0,NA
+"nace_r2","C1089","Manufacture of other food products n.e.c.",0,NA
+"nace_r2","C109","Manufacture of prepared animal feeds",0,NA
+"nace_r2","C1091","Manufacture of prepared feeds for farm animals",0,NA
+"nace_r2","C1092","Manufacture of prepared pet foods",0,NA
+"nace_r2","C11","Manufacture of beverages",0,NA
+"nace_r2","C1101","Distilling, rectifying and blending of spirits",0,NA
+"nace_r2","C1102","Manufacture of wine from grape",0,NA
+"nace_r2","C1103","Manufacture of cider and other fruit wines",0,NA
+"nace_r2","C1104","Manufacture of other non-distilled fermented beverages",0,NA
+"nace_r2","C1105","Manufacture of beer",0,NA
+"nace_r2","C1106","Manufacture of malt",0,NA
+"nace_r2","C1107","Manufacture of soft drinks; production of mineral waters and other bottled waters",0,NA
+"nace_r2","C12","Manufacture of tobacco products",0,NA
+"nace_r2","C13-C15","Manufacture of textiles, wearing apparel, leather and related products",0,NA
+"nace_r2","C13_C14","Manufacture of textiles and wearing apparel",0,NA
+"nace_r2","C13","Manufacture of textiles",0,NA
+"nace_r2","C131","Preparation and spinning of textile fibres",0,NA
+"nace_r2","C132","Weaving of textiles",0,NA
+"nace_r2","C133","Finishing of textiles",0,NA
+"nace_r2","C139","Manufacture of other textiles",0,NA
+"nace_r2","C1391","Manufacture of knitted and crocheted fabrics",0,NA
+"nace_r2","C1392","Manufacture of made-up textile articles, except apparel",0,NA
+"nace_r2","C1393","Manufacture of carpets and rugs",0,NA
+"nace_r2","C1394","Manufacture of cordage, rope, twine and netting",0,NA
+"nace_r2","C1395","Manufacture of non-wovens and articles made from non-wovens, except apparel",0,NA
+"nace_r2","C1396","Manufacture of other technical and industrial textiles",0,NA
+"nace_r2","C1399","Manufacture of other textiles n.e.c.",0,NA
+"nace_r2","C14","Manufacture of wearing apparel",0,NA
+"nace_r2","C141","Manufacture of wearing apparel, except fur apparel",0,NA
+"nace_r2","C1411","Manufacture of leather clothes",0,NA
+"nace_r2","C1412","Manufacture of workwear",0,NA
+"nace_r2","C1413","Manufacture of other outerwear",0,NA
+"nace_r2","C1414","Manufacture of underwear",0,NA
+"nace_r2","C1419","Manufacture of other wearing apparel and accessories",0,NA
+"nace_r2","C142","Manufacture of articles of fur",0,NA
+"nace_r2","C143","Manufacture of knitted and crocheted apparel",0,NA
+"nace_r2","C1431","Manufacture of knitted and crocheted hosiery",0,NA
+"nace_r2","C1439","Manufacture of other knitted and crocheted apparel",0,NA
+"nace_r2","C15","Manufacture of leather and related products",0,NA
+"nace_r2","C151","Tanning and dressing of leather; manufacture of luggage, handbags, saddlery and harness; dressing and dyeing of fur",0,NA
+"nace_r2","C1511","Tanning and dressing of leather; dressing and dyeing of fur",0,NA
+"nace_r2","C1512","Manufacture of luggage, handbags and the like, saddlery and harness",0,NA
+"nace_r2","C152","Manufacture of footwear",0,NA
+"nace_r2","C16-C18","Manufacture of wood, paper, printing and reproduction",0,NA
+"nace_r2","C16","Manufacture of wood and of products of wood and cork, except furniture; manufacture of articles of straw and plaiting materials",0,NA
+"nace_r2","C161","Sawmilling and planing of wood",0,NA
+"nace_r2","C162","Manufacture of products of wood, cork, straw and plaiting materials",0,NA
+"nace_r2","C1621","Manufacture of veneer sheets and wood-based panels",0,NA
+"nace_r2","C1622","Manufacture of assembled parquet floors",0,NA
+"nace_r2","C1623","Manufacture of other builders' carpentry and joinery",0,NA
+"nace_r2","C1624","Manufacture of wooden containers",0,NA
+"nace_r2","C1629","Manufacture of other products of wood; manufacture of articles of cork, straw and plaiting materials",0,NA
+"nace_r2","C17_C18","Manufacture of paper and paper products; printing and reproduction of recorded media",0,NA
+"nace_r2","C17","Manufacture of paper and paper products",0,NA
+"nace_r2","C171","Manufacture of pulp, paper and paperboard",0,NA
+"nace_r2","C1711","Manufacture of pulp",0,NA
+"nace_r2","C1712","Manufacture of paper and paperboard",0,NA
+"nace_r2","C172","Manufacture of articles of paper and paperboard",0,NA
+"nace_r2","C1721","Manufacture of corrugated paper and paperboard and of containers of paper and paperboard",0,NA
+"nace_r2","C1722","Manufacture of household and sanitary goods and of toilet requisites",0,NA
+"nace_r2","C1723","Manufacture of paper stationery",0,NA
+"nace_r2","C1724","Manufacture of wallpaper",0,NA
+"nace_r2","C1729","Manufacture of other articles of paper and paperboard",0,NA
+"nace_r2","C18","Printing and reproduction of recorded media",0,NA
+"nace_r2","C181","Printing and service activities related to printing",0,NA
+"nace_r2","C1811","Printing of newspapers",0,NA
+"nace_r2","C1812","Other printing",0,NA
+"nace_r2","C1813","Pre-press and pre-media services",0,NA
+"nace_r2","C1814","Binding and related services",0,NA
+"nace_r2","C182","Reproduction of recorded media",0,NA
+"nace_r2","C19","Manufacture of coke and refined petroleum products",0,NA
+"nace_r2","C191","Manufacture of coke oven products",0,NA
+"nace_r2","C192","Manufacture of refined petroleum products",0,NA
+"nace_r2","C20_C21","Manufacture of chemicals and chemical products; basic pharmaceutical products and pharmaceutical preparations",0,NA
+"nace_r2","C20","Manufacture of chemicals and chemical products",0,NA
+"nace_r2","C201","Manufacture of basic chemicals, fertilisers and nitrogen compounds, plastics and synthetic rubber in primary forms",0,NA
+"nace_r2","C2011","Manufacture of industrial gases",0,NA
+"nace_r2","C2012","Manufacture of dyes and pigments",0,NA
+"nace_r2","C2013","Manufacture of other inorganic basic chemicals",0,NA
+"nace_r2","C2014","Manufacture of other organic basic chemicals",0,NA
+"nace_r2","C2015","Manufacture of fertilisers and nitrogen compounds",0,NA
+"nace_r2","C2016","Manufacture of plastics in primary forms",0,NA
+"nace_r2","C2017","Manufacture of synthetic rubber in primary forms",0,NA
+"nace_r2","C202","Manufacture of pesticides and other agrochemical products",0,NA
+"nace_r2","C203","Manufacture of paints, varnishes and similar coatings, printing ink and mastics",0,NA
+"nace_r2","C204","Manufacture of soap and detergents, cleaning and polishing preparations, perfumes and toilet preparations",0,NA
+"nace_r2","C2041","Manufacture of soap and detergents, cleaning and polishing preparations",0,NA
+"nace_r2","C2042","Manufacture of perfumes and toilet preparations",0,NA
+"nace_r2","C205","Manufacture of other chemical products",0,NA
+"nace_r2","C2051","Manufacture of explosives",0,NA
+"nace_r2","C2052","Manufacture of glues",0,NA
+"nace_r2","C2053","Manufacture of essential oils",0,NA
+"nace_r2","C2059","Manufacture of other chemical products n.e.c.",0,NA
+"nace_r2","C206","Manufacture of man-made fibres",0,NA
+"nace_r2","C21","Manufacture of basic pharmaceutical products and pharmaceutical preparations",0,NA
+"nace_r2","C211","Manufacture of basic pharmaceutical products",0,NA
+"nace_r2","C212","Manufacture of pharmaceutical preparations",0,NA
+"nace_r2","C22_C23","Manufacture of rubber and plastic products and other non-metallic mineral products",0,NA
+"nace_r2","C22","Manufacture of rubber and plastic products",0,NA
+"nace_r2","C221","Manufacture of rubber products",0,NA
+"nace_r2","C2211","""Manufacture of rubber tyres and tubes; retreading and rebuilding of rubber tyres""",0,NA
+"nace_r2","C2219","Manufacture of other rubber products",0,NA
+"nace_r2","C222","Manufacture of plastics products",0,NA
+"nace_r2","C2221","Manufacture of plastic plates, sheets, tubes and profiles",0,NA
+"nace_r2","C2222","Manufacture of plastic packing goods",0,NA
+"nace_r2","C2223","Manufacture of builders' ware of plastic",0,NA
+"nace_r2","C2229","Manufacture of other plastic products",0,NA
+"nace_r2","C23","Manufacture of other non-metallic mineral products",0,NA
+"nace_r2","C231","Manufacture of glass and glass products",0,NA
+"nace_r2","C2311","Manufacture of flat glass",0,NA
+"nace_r2","C2312","Shaping and processing of flat glass",0,NA
+"nace_r2","C2313","Manufacture of hollow glass",0,NA
+"nace_r2","C2314","Manufacture of glass fibres",0,NA
+"nace_r2","C2319","Manufacture and processing of other glass, including technical glassware",0,NA
+"nace_r2","C232","Manufacture of refractory products",0,NA
+"nace_r2","C233","Manufacture of clay building materials",0,NA
+"nace_r2","C2331","Manufacture of ceramic tiles and flags",0,NA
+"nace_r2","C2332","Manufacture of bricks, tiles and construction products, in baked clay",0,NA
+"nace_r2","C234","Manufacture of other porcelain and ceramic products",0,NA
+"nace_r2","C2341","Manufacture of ceramic household and ornamental articles",0,NA
+"nace_r2","C2342","Manufacture of ceramic sanitary fixtures",0,NA
+"nace_r2","C2343","Manufacture of ceramic insulators and insulating fittings",0,NA
+"nace_r2","C2344","Manufacture of other technical ceramic products",0,NA
+"nace_r2","C2349","Manufacture of other ceramic products",0,NA
+"nace_r2","C235","Manufacture of cement, lime and plaster",0,NA
+"nace_r2","C2351","Manufacture of cement",0,NA
+"nace_r2","C2352","Manufacture of lime and plaster",0,NA
+"nace_r2","C236","Manufacture of articles of concrete, cement and plaster",0,NA
+"nace_r2","C2361","Manufacture of concrete products for construction purposes",0,NA
+"nace_r2","C2362","Manufacture of plaster products for construction purposes",0,NA
+"nace_r2","C2363","Manufacture of ready-mixed concrete",0,NA
+"nace_r2","C2364","Manufacture of mortars",0,NA
+"nace_r2","C2365","Manufacture of fibre cement",0,NA
+"nace_r2","C2369","Manufacture of other articles of concrete, plaster and cement",0,NA
+"nace_r2","C237","Cutting, shaping and finishing of stone",0,NA
+"nace_r2","C239","Manufacture of abrasive products and non-metallic mineral products n.e.c.",0,NA
+"nace_r2","C2391","Production of abrasive products",0,NA
+"nace_r2","C2399","Manufacture of other non-metallic mineral products n.e.c.",0,NA
+"nace_r2","C24_C25","Manufacture of basic metals and fabricated metal products, except machinery and equipment",0,NA
+"nace_r2","C24","Manufacture of basic metals",0,NA
+"nace_r2","C241","Manufacture of basic iron and steel and of ferro-alloys",0,NA
+"nace_r2","C242","Manufacture of tubes, pipes, hollow profiles and related fittings, of steel",0,NA
+"nace_r2","C243","Manufacture of other products of first processing of steel",0,NA
+"nace_r2","C2431","Cold drawing of bars",0,NA
+"nace_r2","C2432","Cold rolling of narrow strip",0,NA
+"nace_r2","C2433","Cold forming or folding",0,NA
+"nace_r2","C2434","Cold drawing of wire",0,NA
+"nace_r2","C244","Manufacture of basic precious and other non-ferrous metals",0,NA
+"nace_r2","C2441","Precious metals production",0,NA
+"nace_r2","C2442","Aluminium production",0,NA
+"nace_r2","C2443","Lead, zinc and tin production",0,NA
+"nace_r2","C2444","Copper production",0,NA
+"nace_r2","C2445","Other non-ferrous metal production",0,NA
+"nace_r2","C245","Casting of metals",0,NA
+"nace_r2","C2451","Casting of iron",0,NA
+"nace_r2","C2452","Casting of steel",0,NA
+"nace_r2","C2453","Casting of light metals",0,NA
+"nace_r2","C2454","Casting of other non-ferrous metals",0,NA
+"nace_r2","C25","Manufacture of fabricated metal products, except machinery and equipment",0,NA
+"nace_r2","C251","Manufacture of structural metal products",0,NA
+"nace_r2","C2511","Manufacture of metal structures and parts of structures",0,NA
+"nace_r2","C2512","Manufacture of doors and windows of metal",0,NA
+"nace_r2","C252","Manufacture of tanks, reservoirs and containers of metal",0,NA
+"nace_r2","C2521","Manufacture of central heating radiators and boilers",0,NA
+"nace_r2","C2529","Manufacture of other tanks, reservoirs and containers of metal",0,NA
+"nace_r2","C253","Manufacture of steam generators, except central heating hot water boilers",0,NA
+"nace_r2","C254","Manufacture of weapons and ammunition",0,NA
+"nace_r2","C255","Forging, pressing, stamping and roll-forming of metal; powder metallurgy",0,NA
+"nace_r2","C256","Treatment and coating of metals; machining",0,NA
+"nace_r2","C2561","Treatment and coating of metals",0,NA
+"nace_r2","C2562","Machining",0,NA
+"nace_r2","C257","Manufacture of cutlery, tools and general hardware",0,NA
+"nace_r2","C2571","Manufacture of cutlery",0,NA
+"nace_r2","C2572","Manufacture of locks and hinges",0,NA
+"nace_r2","C2573","Manufacture of tools",0,NA
+"nace_r2","C259","Manufacture of other fabricated metal products",0,NA
+"nace_r2","C2591","Manufacture of steel drums and similar containers",0,NA
+"nace_r2","C2592","Manufacture of light metal packaging",0,NA
+"nace_r2","C2593","Manufacture of wire products, chain and springs",0,NA
+"nace_r2","C2594","Manufacture of fasteners and screw machine products",0,NA
+"nace_r2","C2599","Manufacture of other fabricated metal products n.e.c.",0,NA
+"nace_r2","C26_C27","Manufacture of computer, electronic and optical products; manufacture of electrical equipment",0,NA
+"nace_r2","C26","Manufacture of computer, electronic and optical products",0,NA
+"nace_r2","C261","Manufacture of electronic components and boards",0,NA
+"nace_r2","C2611","Manufacture of electronic components",0,NA
+"nace_r2","C2612","Manufacture of loaded electronic boards",0,NA
+"nace_r2","C262","Manufacture of computers and peripheral equipment",0,NA
+"nace_r2","C263","Manufacture of communication equipment",0,NA
+"nace_r2","C264","Manufacture of consumer electronics",0,NA
+"nace_r2","C265","Manufacture of instruments and appliances for measuring, testing and navigation; watches and clocks",0,NA
+"nace_r2","C2651","Manufacture of instruments and appliances for measuring, testing and navigation",0,NA
+"nace_r2","C2652","Manufacture of watches and clocks",0,NA
+"nace_r2","C266","Manufacture of irradiation, electromedical and electrotherapeutic equipment",0,NA
+"nace_r2","C267","Manufacture of optical instruments and photographic equipment",0,NA
+"nace_r2","C268","Manufacture of magnetic and optical media",0,NA
+"nace_r2","C27","Manufacture of electrical equipment",0,NA
+"nace_r2","C271","Manufacture of electric motors, generators, transformers and electricity distribution and control apparatus",0,NA
+"nace_r2","C2711","Manufacture of electric motors, generators and transformers",0,NA
+"nace_r2","C2712","Manufacture of electricity distribution and control apparatus",0,NA
+"nace_r2","C272","Manufacture of batteries and accumulators",0,NA
+"nace_r2","C273","Manufacture of wiring and wiring devices",0,NA
+"nace_r2","C2731","Manufacture of fibre optic cables",0,NA
+"nace_r2","C2732","Manufacture of other electronic and electric wires and cables",0,NA
+"nace_r2","C2733","Manufacture of wiring devices",0,NA
+"nace_r2","C274","Manufacture of electric lighting equipment",0,NA
+"nace_r2","C275","Manufacture of domestic appliances",0,NA
+"nace_r2","C2751","Manufacture of electric domestic appliances",0,NA
+"nace_r2","C2752","Manufacture of non-electric domestic appliances",0,NA
+"nace_r2","C279","Manufacture of other electrical equipment",0,NA
+"nace_r2","C28","Manufacture of machinery and equipment n.e.c.",0,NA
+"nace_r2","C281","Manufacture of general-purpose machinery",0,NA
+"nace_r2","C2811","Manufacture of engines and turbines, except aircraft, vehicle and cycle engines",0,NA
+"nace_r2","C2812","Manufacture of fluid power equipment",0,NA
+"nace_r2","C2813","Manufacture of other pumps and compressors",0,NA
+"nace_r2","C2814","Manufacture of other taps and valves",0,NA
+"nace_r2","C2815","Manufacture of bearings, gears, gearing and driving elements",0,NA
+"nace_r2","C282","Manufacture of other general-purpose machinery",0,NA
+"nace_r2","C2821","Manufacture of ovens, furnaces and furnace burners",0,NA
+"nace_r2","C2822","Manufacture of lifting and handling equipment",0,NA
+"nace_r2","C2823","Manufacture of office machinery and equipment (except computers and peripheral equipment)",0,NA
+"nace_r2","C2824","Manufacture of power-driven hand tools",0,NA
+"nace_r2","C2825","Manufacture of non-domestic cooling and ventilation equipment",0,NA
+"nace_r2","C2829","Manufacture of other general-purpose machinery n.e.c.",0,NA
+"nace_r2","C283","Manufacture of agricultural and forestry machinery",0,NA
+"nace_r2","C284","Manufacture of metal forming machinery and machine tools",0,NA
+"nace_r2","C2841","Manufacture of metal forming machinery",0,NA
+"nace_r2","C2849","Manufacture of other machine tools",0,NA
+"nace_r2","C289","Manufacture of other special-purpose machinery",0,NA
+"nace_r2","C2891","Manufacture of machinery for metallurgy",0,NA
+"nace_r2","C2892","Manufacture of machinery for mining, quarrying and construction",0,NA
+"nace_r2","C2893","Manufacture of machinery for food, beverage and tobacco processing",0,NA
+"nace_r2","C2894","Manufacture of machinery for textile, apparel and leather production",0,NA
+"nace_r2","C2895","Manufacture of machinery for paper and paperboard production",0,NA
+"nace_r2","C2896","Manufacture of plastics and rubber machinery",0,NA
+"nace_r2","C2899","Manufacture of other special-purpose machinery n.e.c.",0,NA
+"nace_r2","C29_C30","Manufacture of motor vehicles, trailers, semi-trailers and of other transport equipment",0,NA
+"nace_r2","C29","Manufacture of motor vehicles, trailers and semi-trailers",0,NA
+"nace_r2","C291","Manufacture of motor vehicles",0,NA
+"nace_r2","C292","Manufacture of bodies (coachwork) for motor vehicles; manufacture of trailers and semi-trailers",0,NA
+"nace_r2","C293","Manufacture of parts and accessories for motor vehicles",0,NA
+"nace_r2","C2931","Manufacture of electrical and electronic equipment for motor vehicles",0,NA
+"nace_r2","C2932","Manufacture of other parts and accessories for motor vehicles",0,NA
+"nace_r2","C30","Manufacture of other transport equipment",0,NA
+"nace_r2","C301","Building of ships and boats",0,NA
+"nace_r2","C3011","Building of ships and floating structures",0,NA
+"nace_r2","C3012","Building of pleasure and sporting boats",0,NA
+"nace_r2","C302","Manufacture of railway locomotives and rolling stock",0,NA
+"nace_r2","C303","Manufacture of air and spacecraft and related machinery",0,NA
+"nace_r2","C309","Manufacture of transport equipment n.e.c.",0,NA
+"nace_r2","C3091","Manufacture of motorcycles",0,NA
+"nace_r2","C3092","Manufacture of bicycles and invalid carriages",0,NA
+"nace_r2","C3099","Manufacture of other transport equipment n.e.c.",0,NA
+"nace_r2","C31-C33","Manufacture of furniture; jewellery, musical instruments, toys; repair and installation of machinery and equipment",0,NA
+"nace_r2","C31_C32","Manufacture of furniture; other manufacturing",0,NA
+"nace_r2","C31","Manufacture of furniture",0,NA
+"nace_r2","C310","Manufacture of furniture",0,NA
+"nace_r2","C3101","Manufacture of office and shop furniture",0,NA
+"nace_r2","C3102","Manufacture of kitchen furniture",0,NA
+"nace_r2","C3103","Manufacture of mattresses",0,NA
+"nace_r2","C3109","Manufacture of other furniture",0,NA
+"nace_r2","C32","Other manufacturing",0,NA
+"nace_r2","C321","Manufacture of jewellery, bijouterie and related articles",0,NA
+"nace_r2","C3211","Striking of coins",0,NA
+"nace_r2","C3212","Manufacture of jewellery and related articles",0,NA
+"nace_r2","C3213","Manufacture of imitation jewellery and related articles",0,NA
+"nace_r2","C322","Manufacture of musical instruments",0,NA
+"nace_r2","C323","Manufacture of sports goods",0,NA
+"nace_r2","C324","Manufacture of games and toys",0,NA
+"nace_r2","C325","Manufacture of medical and dental instruments and supplies",0,NA
+"nace_r2","C329","Manufacturing n.e.c.",0,NA
+"nace_r2","C3291","Manufacture of brooms and brushes",0,NA
+"nace_r2","C3299","Other manufacturing n.e.c.",0,NA
+"nace_r2","C33","Repair and installation of machinery and equipment",0,NA
+"nace_r2","C331","Repair of fabricated metal products, machinery and equipment",0,NA
+"nace_r2","C3311","Repair of fabricated metal products",0,NA
+"nace_r2","C3312","Repair of machinery",0,NA
+"nace_r2","C3313","Repair of electronic and optical equipment",0,NA
+"nace_r2","C3314","Repair of electrical equipment",0,NA
+"nace_r2","C3315","Repair and maintenance of ships and boats",0,NA
+"nace_r2","C3316","Repair and maintenance of aircraft and spacecraft",0,NA
+"nace_r2","C3317","Repair and maintenance of other transport equipment",0,NA
+"nace_r2","C3319","Repair of other equipment",0,NA
+"nace_r2","C332","Installation of industrial machinery and equipment",0,NA
+"nace_r2","D","Electricity, gas, steam and air conditioning supply",0,NA
+"nace_r2","D35","Electricity, gas, steam and air conditioning supply",0,NA
+"nace_r2","D351","Electric power generation, transmission and distribution",0,NA
+"nace_r2","D352","Manufacture of gas; distribution of gaseous fuels through mains",0,NA
+"nace_r2","D353","Steam and air conditioning supply",0,NA
+"nace_r2","E36","Water collection, treatment and supply",0,NA

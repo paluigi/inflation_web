@@ -1,13 +1,21 @@
-const CACHE_NAME = 'ea-inflation-app-v1';
+const CACHE_NAME = 'ea-inflation-app-v2';
 
 // The "App Shell" - files we want to download immediately and cache
 const PRECACHE_ASSETS = [
     './',
     './index.html',
+    './ppi.html',
+    './styles.css',
+    './common.js',
+    './index.js',
+    './ppi.js',
+    './weights.html',
+    './weights.js',
     './manifest.json',
     './assets/maps/geo.csv',
     './assets/maps/coicop18.csv',
-    './assets/maps/unit.csv'
+    './assets/maps/unit.csv',
+    './assets/maps/nace_r2.csv'
 ];
 
 // 1. Install Event: Cache the App Shell
@@ -48,7 +56,7 @@ self.addEventListener('fetch', event => {
         return; // Let the browser handle this natively
     }
     // NEW: Network-Only strategy for the update indicator so it's always fresh
-    if (event.request.url.endsWith('last_update.txt')) {
+    if (event.request.url.endsWith('last_update.txt') || event.request.url.endsWith('ppi_last_update.txt') || event.request.url.endsWith('weights_last_update.txt')) {
         event.respondWith(fetch(event.request));
         return;
     }

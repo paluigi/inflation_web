@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HICP Dashboard — Euro Area Inflation</title>
+    <title>PPI Dashboard — Producer Price Index</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="styles.css">
 
@@ -32,13 +32,13 @@
 
             <div class="tabs">
                 <button class="tab active" data-target="tab1">Multi-Country</button>
-                <button class="tab" data-target="tab2">Multi-COICOP</button>
+                <button class="tab" data-target="tab2">Multi-NACE</button>
             </div>
 
             <div id="tab1" class="tab-content active">
                 <div class="control-group">
-                    <label>Select COICOP:</label>
-                    <select id="t1-coicop" placeholder="Search code or name..."></select>
+                    <label>Select NACE R2 Activity:</label>
+                    <select id="t1-nace" placeholder="Search code or name..."></select>
                 </div>
                 <div class="control-group">
                     <label>Select Geographies (Multiple):</label>
@@ -52,14 +52,14 @@
                     <select id="t2-geo" placeholder="Search code or name..."></select>
                 </div>
                 <div class="control-group">
-                    <label>Select COICOPs (Multiple):</label>
-                    <select id="t2-coicop" multiple placeholder="Search code or name..."></select>
+                    <label>Select NACE R2 Activities (Multiple):</label>
+                    <select id="t2-nace" multiple placeholder="Search code or name..."></select>
                 </div>
             </div>
 
             <div class="control-group" style="margin-top: 10px;">
                 <label>Unit of Measure:</label>
-                <select id="shared-unit" placeholder="Select Unit..."></select>
+                <select id="shared-unit" placeholder="Select unit..."></select>
             </div>
 
             <div class="control-group">
@@ -102,6 +102,6 @@
         </main>
     </div>
 
-    <script type="module" src="index.js"></script>
+    <script type="module" src="ppi.js"></script>
 </body>
 </html>
