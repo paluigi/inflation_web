@@ -74,7 +74,7 @@ UI.btnQuery.addEventListener('click', async () => {
         const dFrom = parseDateBoundary(document.getElementById('date-from').value, false);
         const dTo = parseDateBoundary(document.getElementById('date-to').value, true);
 
-        let whereClauses = [`unit = '${unit}'`];
+        let whereClauses = [];
         let singleTitleName = "";
         let groupDimension = "";
 

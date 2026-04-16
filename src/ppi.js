@@ -109,7 +109,7 @@ UI.btnQuery.addEventListener('click', async () => {
 
         const query = `
             PIVOT (
-                SELECT TIME_PERIOD as date, ${groupDimension}, CAST(obsValue AS FLOAT) as value
+                SELECT TIME_PERIOD as date, ${groupDimension}, CAST(value AS FLOAT) as value
                 FROM read_parquet('ppi_data.parquet')
                 WHERE ${whereClauses.join(' AND ')}
             )
