@@ -8,6 +8,22 @@ export function registerServiceWorker() {
             navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+                    // Auto-reload when a new service worker is activated
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                console.log('[Service Worker] New version activated, reloading page…');
+                                window.location.reload();
+                            }
+                        });
+                    });
+
+                    // Periodically check for SW updates (every 30 min)
+                    setInterval(() => {
+                        registration.update();
+                    }, 30 * 60 * 1000);
                 })
                 .catch(error => {
                     console.log('ServiceWorker registration failed: ', error);

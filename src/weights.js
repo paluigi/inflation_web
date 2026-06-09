@@ -31,7 +31,7 @@ async function init() {
         UI._db = db;
         UI._conn = conn;
 
-        fetch('./assets/weights_last_update.txt')
+        fetch('./assets/weights_last_update.txt', { cache: 'no-store' })
             .then(res => res.ok ? res.text() : "Unknown")
             .then(text => document.getElementById('last-update').innerText = `Last Update: ${text}`)
             .catch(() => {});
