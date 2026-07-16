@@ -55,6 +55,36 @@ export async function fetchCSV(path) {
     });
 }
 
+/**
+ * Export the given data to an .xlsx file, rounding every numeric value to
+ * exactly 2 decimal places so that IEEE 754 artifacts (e.g. 2.3400000000000003)
+ * never leak into the cell values. Non-numeric cells (strings, nulls) are
+ * passed through untouched.
+ *
+ * Rounding uses Math.round((val + Number.EPSILON) * 100) / 100 which keeps the
+ * value as a JS Number (hence a numeric Excel cell), unlike toFixed(2) which
+ * would coerce it to a text cell and break downstream analysis.
+ */
+export function exportToExcel(data, filename) {
+    if (!data || data.length === 0) return;
+
+    const roundedData = data.map(row => {
+        const newRow = {};
+        for (const key in row) {
+            const val = row[key];
+            newRow[key] = (typeof val === 'number' && Number.isFinite(val))
+                ? Math.round((val + Number.EPSILON) * 100) / 100
+                : val;
+        }
+        return newRow;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(roundedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+    XLSX.writeFile(workbook, filename);
+}
+
 export function initSelect(selector, data, mapKey, isMultiple, maps) {
     const options = data.map(row => {
         maps[mapKey][row.code] = row.name;

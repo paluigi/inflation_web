@@ -101,3 +101,10 @@ Rscript metadata_download.R
 | `nace_r2.csv` | NACE Rev.2 classification codes |
 | `geo.csv` / `geo_ppi.csv` | Geography codes |
 | `unit.csv` / `unit_ppi.csv` | Unit of measurement codes |
+
+## Change Log
+
+### 2026-07-16 — Fix Excel export floating-point precision
+
+- Numeric values in exported `.xlsx` files are now rounded to exactly 2 decimal places (`Math.round((val + Number.EPSILON) * 100) / 100`), eliminating IEEE 754 artifacts (e.g. `2.3400000000000003`) that broke downstream analysis.
+- Refactored the duplicated export logic across HICP, PPI, and Weights pages into a single shared `exportToExcel()` helper in `common.js`.
