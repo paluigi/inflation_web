@@ -82,6 +82,38 @@ client = sdmx.Client("ESTAT")
 code_map = pd.read_csv(MAPS_DIR / "coicop18.csv")
 
 # ===========================
+# FLASH ESTIMATE RELEASE WINDOW FILTER
+# ===========================
+# Eurostat publishes the HICP flash estimate at the end of each month
+# (typically around the last working day), while the full detailed release
+# with all sub-items follows a few weeks later (usually mid-month).
+#
+# During this interim window — roughly the 28th of the current month through
+# the 8th of the following month — only a limited subset of indices is
+# updated in the PRC_HICP_MINR dataflow: the headline total (level 1) plus
+# the main analytical aggregates (level 0, e.g. energy, food, services,
+# core inflation measures). The detailed sub-items (levels 2–6) are not yet
+# refreshed, so polling them wastes API calls for data that has not changed.
+#
+# To avoid this, when the script runs on day >= 28 or day <= 8 we restrict
+# the download to items whose COICOP "level" column is 0 or 1, which
+# correspond to the indices covered by the flash estimate.
+
+check_date = datetime.now(ZoneInfo("Europe/Rome"))
+current_day = check_date.day
+flash_window = current_day >= 28 or current_day <= 8
+
+if flash_window:
+    print(f"Current day {current_day} is within the flash-estimate release "
+          f"window (28th–8th). Restricting download to flash-estimate items "
+          f"(COICOP level 0 or 1).")
+    code_map = code_map[code_map["level"].isin([0, 1])].reset_index(drop=True)
+    print(f"Filtered to {len(code_map)} items for flash-estimate download.")
+else:
+    print(f"Current day {current_day} is outside the flash-estimate window. "
+          f"Downloading all {len(code_map)} items.")
+
+# ===========================
 # GET STRUCTURE
 # ===========================
 
@@ -120,12 +152,39 @@ for i, item_id in enumerate(code_map["code"]):
 # SAVE TO PARQUET
 # ===========================
 
+output_file = OUTPUT_DIR / "hicp_data.parquet"
+
 if all_data:
     combined_df = pd.concat(all_data, ignore_index=True)
-    combined_df = combined_df.drop_duplicates(keep="last")
     combined_df = combined_df.drop(columns=['freq'], errors='ignore')
-    
-    output_file = OUTPUT_DIR / "hicp_data.parquet"
+
+    # Detect the COICOP item column name (the dimension ID varies by dataflow)
+    coicop_col = next(col for col in combined_df.columns if "coicop" in col.lower())
+
+    # ------------------------------------------------------------------
+    # FLASH-ESTIMATE MERGE LOGIC
+    # ------------------------------------------------------------------
+    # During the flash-estimate window only a subset of items (COICOP level
+    # 0 and 1) was downloaded. Overwriting the parquet outright would
+    # destroy the detailed sub-items (levels 2–6) saved by the last full
+    # run. Instead, we read the existing parquet, remove only the series
+    # we just re-downloaded, and append the fresh data — so every other
+    # item is preserved in its previous state.
+    # ------------------------------------------------------------------
+    if flash_window and output_file.exists():
+        print("Flash-estimate window: merging with existing parquet...")
+        existing_df = pd.read_parquet(output_file)
+
+        # Drop the item codes we just refreshed from the old data
+        updated_codes = list(combined_df[coicop_col].unique())
+        existing_df = existing_df[~existing_df[coicop_col].isin(updated_codes)]
+
+        # Combine preserved data with freshly downloaded data
+        combined_df = pd.concat([existing_df, combined_df], ignore_index=True)
+        print(f"Preserved {len(existing_df)} rows from previous download, "
+              f"updated {len(updated_codes)} item codes.")
+
+    combined_df = combined_df.drop_duplicates(keep="last")
     combined_df.to_parquet(output_file, index=False)
     print(f"\nSaved {output_file}")
 else:
