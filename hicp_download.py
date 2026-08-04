@@ -99,8 +99,8 @@ code_map = pd.read_csv(MAPS_DIR / "coicop18.csv")
 # the download to items whose COICOP "level" column is 0 or 1, which
 # correspond to the indices covered by the flash estimate.
 
-now = datetime.now(ZoneInfo("Europe/Rome"))
-current_day = now.day
+check_date = datetime.now(ZoneInfo("Europe/Rome"))
+current_day = check_date.day
 flash_window = current_day >= 28 or current_day <= 8
 
 if flash_window:
