@@ -110,3 +110,9 @@ Rscript metadata_download.R
 
 - `hicp_download.py` now checks the calendar day of the month at startup. If the script runs between the **28th of the current month and the 8th of the following month** (inclusive), only COICOP level 0 (analytical aggregates) and level 1 (headline total) items are downloaded. During this window Eurostat publishes only the HICP flash estimate; the detailed sub-items (levels 2–6) are not yet updated, so polling them wastes API calls. Outside this window all items are downloaded as before.
 - README updated to document the new behavior.
+
+
+### 2026-07-16 — Fix Excel export floating-point precision
+
+- Numeric values in exported `.xlsx` files are now rounded to exactly 2 decimal places (`Math.round((val + Number.EPSILON) * 100) / 100`), eliminating IEEE 754 artifacts (e.g. `2.3400000000000003`) that broke downstream analysis.
+- Refactored the duplicated export logic across HICP, PPI, and Weights pages into a single shared `exportToExcel()` helper in `common.js`.

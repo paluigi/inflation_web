@@ -8,6 +8,22 @@ export function registerServiceWorker() {
             navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+                    // Auto-reload when a new service worker is activated
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+                                console.log('[Service Worker] New version activated, reloading page…');
+                                window.location.reload();
+                            }
+                        });
+                    });
+
+                    // Periodically check for SW updates (every 30 min)
+                    setInterval(() => {
+                        registration.update();
+                    }, 30 * 60 * 1000);
                 })
                 .catch(error => {
                     console.log('ServiceWorker registration failed: ', error);
@@ -37,6 +53,36 @@ export async function fetchCSV(path) {
             complete: function(results) { resolve(results.data); }
         });
     });
+}
+
+/**
+ * Export the given data to an .xlsx file, rounding every numeric value to
+ * exactly 2 decimal places so that IEEE 754 artifacts (e.g. 2.3400000000000003)
+ * never leak into the cell values. Non-numeric cells (strings, nulls) are
+ * passed through untouched.
+ *
+ * Rounding uses Math.round((val + Number.EPSILON) * 100) / 100 which keeps the
+ * value as a JS Number (hence a numeric Excel cell), unlike toFixed(2) which
+ * would coerce it to a text cell and break downstream analysis.
+ */
+export function exportToExcel(data, filename) {
+    if (!data || data.length === 0) return;
+
+    const roundedData = data.map(row => {
+        const newRow = {};
+        for (const key in row) {
+            const val = row[key];
+            newRow[key] = (typeof val === 'number' && Number.isFinite(val))
+                ? Math.round((val + Number.EPSILON) * 100) / 100
+                : val;
+        }
+        return newRow;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(roundedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+    XLSX.writeFile(workbook, filename);
 }
 
 export function initSelect(selector, data, mapKey, isMultiple, maps) {

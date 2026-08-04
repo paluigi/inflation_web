@@ -1,7 +1,7 @@
 import {
     registerServiceWorker, initDuckDB, fetchCSV, initSelect,
     parseDateBoundary, renderOutput, initThemeToggle, initTabs,
-    setActiveNavLink
+    setActiveNavLink, exportToExcel
 } from './common.js';
 import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.28.0/+esm';
 
@@ -31,7 +31,7 @@ async function init() {
         UI._db = db;
         UI._conn = conn;
 
-        fetch('./assets/ppi_last_update.txt')
+        fetch('./assets/ppi_last_update.txt', { cache: 'no-store' })
             .then(res => res.ok ? res.text() : "Unknown")
             .then(text => document.getElementById('last-update').innerText = `Last Update: ${text}`)
             .catch(() => {});
@@ -149,11 +149,7 @@ UI.btnQuery.addEventListener('click', async () => {
 });
 
 UI.btnExport.addEventListener('click', () => {
-    if (!currentData || currentData.length === 0) return;
-    const worksheet = XLSX.utils.json_to_sheet(currentData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-    XLSX.writeFile(workbook, "ppi_data.xlsx");
+    exportToExcel(currentData, "ppi_data.xlsx");
 });
 
 init();

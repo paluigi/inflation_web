@@ -1,36 +1,38 @@
-const CACHE_NAME = 'ea-inflation-app-v2';
+const CACHE_NAME = 'ea-inflation-app-v3';
 
-// The "App Shell" - files we want to download immediately and cache
+// The "App Shell" — files to pre-cache for offline fallback
 const PRECACHE_ASSETS = [
     './',
     './index.html',
     './ppi.html',
+    './weights.html',
     './styles.css',
     './common.js',
     './index.js',
     './ppi.js',
-    './weights.html',
     './weights.js',
     './manifest.json',
     './assets/maps/geo.csv',
     './assets/maps/coicop18.csv',
     './assets/maps/unit.csv',
-    './assets/maps/nace_r2.csv'
+    './assets/maps/nace_r2.csv',
+    './assets/maps/geo_ppi.csv',
+    './assets/maps/unit_ppi.csv'
 ];
 
-// 1. Install Event: Cache the App Shell
+// 1. Install Event: Pre-cache the App Shell for offline fallback
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('[Service Worker] Pre-caching offline pages');
+                console.log('[Service Worker] Pre-caching offline fallback');
                 return cache.addAll(PRECACHE_ASSETS);
             })
             .then(() => self.skipWaiting())
     );
 });
 
-// 2. Activate Event: Clean up old caches if we update CACHE_NAME
+// 2. Activate Event: Clean up old caches
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
@@ -55,37 +57,40 @@ self.addEventListener('fetch', event => {
     if (event.request.headers.has('range') || event.request.url.endsWith('.parquet')) {
         return; // Let the browser handle this natively
     }
-    // NEW: Network-Only strategy for the update indicator so it's always fresh
-    if (event.request.url.endsWith('last_update.txt') || event.request.url.endsWith('ppi_last_update.txt') || event.request.url.endsWith('weights_last_update.txt')) {
-        event.respondWith(fetch(event.request));
+
+    // Network-Only with no-store for last_update indicators — always fresh
+    if (event.request.url.endsWith('last_update.txt') ||
+        event.request.url.endsWith('ppi_last_update.txt') ||
+        event.request.url.endsWith('weights_last_update.txt')) {
+        const noCacheRequest = new Request(event.request, { cache: 'no-store' });
+        event.respondWith(
+            fetch(noCacheRequest).catch(() => caches.match(event.request))
+        );
         return;
     }
 
-    // For all other requests (HTML, JS, CSS, CSVs), use a "Cache First, fallback to Network" strategy
+    // Network First, Cache Fallback for all app assets (HTML, JS, CSS, CSVs)
+    // When online: always serve the latest version from the server
+    // When offline: fall back to the pre-cached version
     event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-            
-            // If not in cache, fetch from network and dynamically cache it
-            return fetch(event.request).then(networkResponse => {
+        fetch(event.request)
+            .then(networkResponse => {
                 // Don't cache bad responses or 3rd party opaque responses
-                if(!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+                if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
                     return networkResponse;
                 }
-                
-                // Clone the response because it can only be consumed once
+
+                // Update cache with the fresh response
                 const responseToCache = networkResponse.clone();
                 caches.open(CACHE_NAME).then(cache => {
                     cache.put(event.request, responseToCache);
                 });
 
                 return networkResponse;
-            }).catch(err => {
-                console.error('[Service Worker] Fetch failed:', err);
-                // Optional: You could return a custom offline page here if needed
-            });
-        })
+            })
+            .catch(() => {
+                // Network failed — fall back to cache (offline support)
+                return caches.match(event.request);
+            })
     );
 });
