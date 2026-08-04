@@ -45,6 +45,8 @@ python hicp_download.py
 - Output: `src/assets/data/hicp_data.parquet`
 - Last update: `src/assets/last_update.txt`
 
+**Flash-estimate release window (day 28–8):** When the script runs between the 28th of the current month and the 8th of the following month, only a limited set of indices is automatically downloaded — the headline total (COICOP level 1) and the main analytical aggregates (COICOP level 0, e.g. energy, food, services, core inflation measures). During this window Eurostat publishes only the HICP flash estimate, so the detailed sub-items (levels 2–6) are not yet updated and polling them is unnecessary. Outside this window all items are downloaded as normal.
+
 #### 2. HICP Weights (Python)
 
 ```bash
@@ -101,3 +103,10 @@ Rscript metadata_download.R
 | `nace_r2.csv` | NACE Rev.2 classification codes |
 | `geo.csv` / `geo_ppi.csv` | Geography codes |
 | `unit.csv` / `unit_ppi.csv` | Unit of measurement codes |
+
+## Change Log
+
+### 2026-08-04 — Flash-estimate release window filter
+
+- `hicp_download.py` now checks the calendar day of the month at startup. If the script runs between the **28th of the current month and the 8th of the following month** (inclusive), only COICOP level 0 (analytical aggregates) and level 1 (headline total) items are downloaded. During this window Eurostat publishes only the HICP flash estimate; the detailed sub-items (levels 2–6) are not yet updated, so polling them wastes API calls. Outside this window all items are downloaded as before.
+- README updated to document the new behavior.
