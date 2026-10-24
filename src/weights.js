@@ -1,6 +1,6 @@
 import {
     registerServiceWorker, initDuckDB, fetchCSV, initSelect,
-    parseDateBoundary, renderOutput, initThemeToggle, initTabs,
+    parseDateBoundary, renderOutput, initThemeToggle, initTabs, initNavDropdown,
     setActiveNavLink, CHART_COLORS, exportToExcel
 } from './common.js';
 import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.28.0/+esm';
@@ -25,6 +25,7 @@ async function init() {
         registerServiceWorker();
         initThemeToggle(myChartRef);
         initTabs();
+        initNavDropdown();
         setActiveNavLink('weights');
 
         const { db, conn } = await initDuckDB();
