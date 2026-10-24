@@ -78,6 +78,7 @@ UI.btnQuery.addEventListener('click', async () => {
         let whereClauses = [`UNIT = '${unit}'`];
         let singleTitleName = "";
         let groupDimension = "";
+        let pivotValues = [];
 
         if (activeTab === 'tab1') {
             const nace = UI.t1Nace.getValue();
@@ -89,6 +90,7 @@ UI.btnQuery.addEventListener('click', async () => {
 
             whereClauses.push(`nace_r2 = '${nace}'`);
             whereClauses.push(`geo IN (${geos.map(g => `'${g}'`).join(',')})`);
+            pivotValues = geos;
         } else {
             const geo = UI.t2Geo.getValue();
             const naces = UI.t2Nace.getValue();
@@ -99,10 +101,16 @@ UI.btnQuery.addEventListener('click', async () => {
 
             whereClauses.push(`geo = '${geo}'`);
             whereClauses.push(`nace_r2 IN (${naces.map(n => `'${n}'`).join(',')})`);
+            pivotValues = naces;
         }
 
         if (dFrom) whereClauses.push(`TIME_PERIOD >= '${dFrom}'`);
         if (dTo) whereClauses.push(`TIME_PERIOD <= '${dTo}'`);
+
+        // Pivot values are passed as an explicit IN list: a dynamic ON makes DuckDB
+        // create a temporary enum type (__pivot_enum_0_0) that intermittently fails
+        // with "Catalog Error" when the query is re-run on the same connection.
+        const pivotList = [...pivotValues].sort().map(v => `'${v}'`).join(',');
 
         const parquetUrl = new URL('./assets/data/ppi_data.parquet', window.location.href).href;
         await UI._db.registerFileURL('ppi_data.parquet', parquetUrl, duckdb.DuckDBDataProtocol.HTTP, false);
@@ -113,7 +121,7 @@ UI.btnQuery.addEventListener('click', async () => {
                 FROM read_parquet('ppi_data.parquet')
                 WHERE ${whereClauses.join(' AND ')}
             )
-            ON ${groupDimension}
+            ON ${groupDimension} IN (${pivotList})
             USING first(value)
             ORDER BY date ASC
         `;
