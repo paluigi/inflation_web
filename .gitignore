@@ -168,3 +168,6 @@ src/assets/data/ppi_data.parquet
 .vscode/settings.json
 src/.vscode/settings.json
 /.kilo
+.zcode/plans/plan-session_61cf534fe041f904b3a5ef1b63aedb16.md
+src/assets/data/hicp_weights.parquet
+src/assets/weights_last_update.txt
