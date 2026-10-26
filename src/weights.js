@@ -1,6 +1,6 @@
 import {
     registerServiceWorker, initDuckDB, fetchCSV, initSelect,
-    parseDateBoundary, renderOutput, initThemeToggle, initTabs,
+    parseDateBoundary, renderOutput, initThemeToggle, initTabs, initNavDropdown,
     setActiveNavLink, CHART_COLORS, exportToExcel
 } from './common.js';
 import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.28.0/+esm';
@@ -25,6 +25,7 @@ async function init() {
         registerServiceWorker();
         initThemeToggle(myChartRef);
         initTabs();
+        initNavDropdown();
         setActiveNavLink('weights');
 
         const { db, conn } = await initDuckDB();
@@ -77,6 +78,7 @@ UI.btnQuery.addEventListener('click', async () => {
         let whereClauses = [];
         let singleTitleName = "";
         let groupDimension = "";
+        let pivotValues = [];
 
         if (activeTab === 'tab1') {
             const coicop = UI.t1Coicop.getValue();
@@ -88,6 +90,7 @@ UI.btnQuery.addEventListener('click', async () => {
 
             whereClauses.push(`coicop18 = '${coicop}'`);
             whereClauses.push(`geo IN (${geos.map(g => `'${g}'`).join(',')})`);
+            pivotValues = geos;
         } else {
             const geo = UI.t2Geo.getValue();
             const coicops = UI.t2Coicop.getValue();
@@ -98,10 +101,16 @@ UI.btnQuery.addEventListener('click', async () => {
 
             whereClauses.push(`geo = '${geo}'`);
             whereClauses.push(`coicop18 IN (${coicops.map(c => `'${c}'`).join(',')})`);
+            pivotValues = coicops;
         }
 
         if (dFrom) whereClauses.push(`TIME_PERIOD >= '${dFrom}'`);
         if (dTo) whereClauses.push(`TIME_PERIOD <= '${dTo}'`);
+
+        // Pivot values are passed as an explicit IN list: a dynamic ON makes DuckDB
+        // create a temporary enum type (__pivot_enum_0_0) that intermittently fails
+        // with "Catalog Error" when the query is re-run on the same connection.
+        const pivotList = [...pivotValues].sort().map(v => `'${v}'`).join(',');
 
         const parquetUrl = new URL('./assets/data/hicp_weights.parquet', window.location.href).href;
         await UI._db.registerFileURL('hicp_weights.parquet', parquetUrl, duckdb.DuckDBDataProtocol.HTTP, false);
@@ -112,7 +121,7 @@ UI.btnQuery.addEventListener('click', async () => {
                 FROM read_parquet('hicp_weights.parquet')
                 WHERE ${whereClauses.join(' AND ')}
             )
-            ON ${groupDimension}
+            ON ${groupDimension} IN (${pivotList})
             USING first(value)
             ORDER BY date ASC
         `;
