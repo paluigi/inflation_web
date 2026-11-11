@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ea-inflation-app-v3';
+const CACHE_NAME = 'ea-inflation-app-v4';
 
 // The "App Shell" — files to pre-cache for offline fallback
 const PRECACHE_ASSETS = [
@@ -6,11 +6,15 @@ const PRECACHE_ASSETS = [
     './index.html',
     './ppi.html',
     './weights.html',
+    './ppi_domestic.html',
+    './ppi_nondomestic.html',
     './styles.css',
     './common.js',
     './index.js',
     './ppi.js',
     './weights.js',
+    './ppi_domestic.js',
+    './ppi_nondomestic.js',
     './manifest.json',
     './assets/maps/geo.csv',
     './assets/maps/coicop18.csv',

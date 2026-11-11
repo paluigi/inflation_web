@@ -47,7 +47,7 @@ print(paste("PPI geo codes:", nrow(geo_col)))
 write.csv(geo_col, file = "src/assets/maps/geo_ppi.csv", row.names = FALSE)
 print("Saved PPI geo map to src/assets/maps/geo_ppi.csv")
 
-ppi_unit_codes <- c("I21", "PCH_PRE")
+ppi_unit_codes <- c("I21", "PCH_PRE", "PCH_SM")
 
 unit_col <- fil |>
   filter(concept == "unit") |>

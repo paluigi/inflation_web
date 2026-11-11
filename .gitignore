@@ -164,6 +164,8 @@ storage/
 
 src/assets/data/hicp_data.parquet
 src/assets/data/ppi_data.parquet
+src/assets/data/ppi_domestic_data.parquet
+src/assets/data/ppi_nondomestic_data.parquet
 !uv.lock
 .vscode/settings.json
 src/.vscode/settings.json

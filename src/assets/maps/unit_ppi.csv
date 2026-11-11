@@ -1,3 +1,4 @@
 "concept","code","name"
 "unit","I21","Index, 2021=100"
 "unit","PCH_PRE","Percentage change on previous period"
+"unit","PCH_SM","Percentage change compared to same period in previous year"
